@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MathMate - 技术详解</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    :root {
+      --primary: #6C5CE7;
+      --primary-light: #A29BFE;
+      --primary-dark: #5A4BD1;
+      --accent: #00CEC9;
+      --accent-light: #81ECEC;
+      --gradient-1: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 50%, #00CEC9 100%);
+      --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-3: linear-gradient(135deg, #00CEC9 0%, #6C5CE7 100%);
+      --bg: #0F0F1A;
+      --bg-card: #1A1A2E;
+      --bg-card-hover: #222240;
+      --text: #E8E8F0;
+      --text-secondary: #A0A0C0;
+      --border: rgba(108, 92, 231, 0.2);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --radius: 16px;
+      --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden;
+    }
+
+    /* ===== Reading Progress Bar ===== */
+    .reading-progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+      background: var(--gradient-1); width: 0%; transition: width 0.1s linear;
+    }
+
+    /* ===== Matrix Grid Background ===== */
+    .matrix-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.03;
+      background-image:
+        linear-gradient(rgba(108,92,231,0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108,92,231,0.4) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ===== Floating Symbols ===== */
+    .floating-symbols {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .float-sym {
+      position: absolute; font-family: var(--font-mono); color: rgba(108,92,231,0.07);
+      animation: symbolDrift linear infinite; font-size: 14px; user-select: none;
+    }
+    @keyframes symbolDrift {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    }
+
+    /* ===== Cursor Glow ===== */
+    .cursor-glow {
+      position: fixed; pointer-events: none; z-index: 998;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(108,92,231,0.06) 0%, rgba(0,206,201,0.03) 40%, transparent 70%);
+      transform: translate(-50%, -50%);
+      transition: left 0.08s ease-out, top 0.08s ease-out;
+    }
+
+    /* ===== Nav ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(20px); background: rgba(15,15,26,0.85);
+      border-bottom: 1px solid var(--border); transition: all 0.3s;
+    }
+    nav.scrolled { padding: 0.5rem 2rem; background: rgba(15,15,26,0.95); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.75rem; font-size: 1.3rem; font-weight: 700;
+      background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
+    }
+    .nav-logo svg { width: 30px; height: 30px; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; position: relative;
+    }
+    .nav-links a:hover { color: var(--primary-light); }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+      background: var(--gradient-1); transition: width 0.3s; border-radius: 1px;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-back {
+      display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1rem;
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); text-decoration: none; font-size: 0.85rem; transition: all 0.3s;
+    }
+    .nav-back:hover { border-color: var(--primary); background: var(--bg-card-hover); }
+
+    /* ===== Section Common ===== */
+    .section { padding: 5rem 2rem; position: relative; }
+    .section-bg-glow {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(108,92,231,0.03), transparent);
+      pointer-events: none;
+    }
+    .container { max-width: 1100px; margin: 0 auto; position: relative; }
+    .section-header { text-align: center; margin-bottom: 1rem; }
+    .section-label {
+      display: inline-block; font-size: 0.78rem; font-weight: 600; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;
+    }
+    .section-header h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 700; margin-bottom: 0.8rem; }
+    .section-header p { color: var(--text-secondary); max-width: 620px; margin: 0 auto; font-size: 0.95rem; }
+
+    /* ===== Hero ===== */
+    .tech-hero {
+      min-height: 55vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 7rem 2rem 3rem; position: relative; overflow: hidden;
+    }
+    .tech-hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background:
+        radial-gradient(circle at 25% 40%, rgba(108,92,231,0.1) 0%, transparent 40%),
+        radial-gradient(circle at 75% 60%, rgba(0,206,201,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(108,92,231,0.04) 0%, transparent 60%);
+      animation: heroFloat 20s ease-in-out infinite;
+    }
+    .tech-hero::after {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(108,92,231,0.015) 2px, rgba(108,92,231,0.015) 4px
+      );
+      pointer-events: none; animation: scanlines 8s linear infinite;
+    }
+    @keyframes scanlines { 0%{transform:translateY(0)} 100%{transform:translateY(4px)} }
+    @keyframes heroFloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-2%,-2%)} }
+    .tech-hero-content { position: relative; z-index: 1; max-width: 750px; }
+    .tech-hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 1rem; }
+    .tech-hero h1 .gradient-text { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .tech-hero p { font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 1.5rem; line-height: 1.8; }
+    .tech-hero-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem;
+      background: var(--gradient-2); color: white; border: none; border-radius: 12px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+      text-decoration: none; box-shadow: 0 4px 20px rgba(108,92,231,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(108,92,231,0.5); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem;
+      background: transparent; color: var(--text); border: 1px solid var(--border);
+      border-radius: 12px; font-size: 0.95rem; font-weight: 500; cursor: pointer;
+      transition: all 0.3s; text-decoration: none;
+    }
+    .btn-secondary:hover { border-color: var(--primary); background: rgba(108,92,231,0.1); transform: translateY(-2px); }
+
+    /* ===== Quick Nav ===== */
+    .quick-nav {
+      display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;
+      margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);
+    }
+    .quick-nav a {
+      padding: 0.4rem 1rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 0.82rem;
+      transition: all 0.3s;
+    }
+    .quick-nav a:hover { border-color: var(--primary); color: var(--primary-light); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(108,92,231,0.2); }
+
+    /* ===== Philosophy Cards ===== */
+    .philosophy-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 2rem;
+    }
+    .philosophy-card {
+      padding: 2rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); position: relative; overflow: hidden; transition: all 0.4s;
+    }
+    .philosophy-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .philosophy-card:nth-child(1)::before { background: #6C5CE7; }
+    .philosophy-card:nth-child(2)::before { background: #00CEC9; }
+    .philosophy-card:nth-child(3)::before { background: #FF6B6B; }
+    .philosophy-card:nth-child(4)::before { background: #FDCB6E; }
+    .philosophy-card:nth-child(5)::before { background: #A29BFE; }
+    .philosophy-card:hover { transform: translateY(-4px); border-color: rgba(108,92,231,0.4); box-shadow: var(--shadow); }
+    .philosophy-card:hover::before { opacity: 1; }
+    .philosophy-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .philosophy-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.8; }
+    .philosophy-icon { font-size: 1.4rem; }
+
+    /* ===== Pipeline Deep Dive ===== */
+    .pipeline-detail {
+      display: grid; grid-template-columns: 1fr; gap: 0; margin-top: 2rem; position: relative;
+    }
+    .pipeline-detail::before {
+      content: ''; position: absolute; left: 28px; top: 70px; bottom: 20px; width: 2px;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 50%, #FF6B6B 100%); opacity: 0.2;
+    }
+    .pipeline-stage {
+      padding: 2rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; transition: all 0.3s;
+      margin-bottom: 1.5rem; position: relative;
+    }
+    .pipeline-stage:last-child { margin-bottom: 0; }
+    .pipeline-stage:hover { border-color: rgba(108,92,231,0.4); }
+    .stage-num {
+      width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 1.3rem; color: white; flex-shrink: 0;
+    }
+    .stage-num.s1 { background: linear-gradient(135deg, #6C5CE7, #A29BFE); }
+    .stage-num.s2 { background: linear-gradient(135deg, #00CEC9, #81ECEC); }
+    .stage-num.s3 { background: linear-gradient(135deg, #FF6B6B, #FDCB6E); }
+    .stage-content h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .stage-content p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; margin-bottom: 0.6rem; }
+    .stage-tech { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .stage-tech span {
+      padding: 0.2rem 0.6rem; background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2);
+      border-radius: 6px; font-size: 0.75rem; color: var(--primary-light);
+    }
+
+    /* ===== Code Block ===== */
+    .code-block {
+      background: #0c0c18; border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; margin-top: 1rem; overflow-x: auto; font-family: var(--font-mono);
+      font-size: 0.78rem; line-height: 1.8; color: var(--text-secondary); position: relative;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+    }
+    .code-block::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0.4;
+    }
+    .code-block .code-label {
+      font-size: 0.72rem; color: var(--accent); margin-bottom: 0.8rem; font-weight: 600;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .code-block .code-label::before {
+      content: ''; display: inline-flex; gap: 3px;
+      width: 8px; height: 8px; border-radius: 50%; background: #FF6B6B;
+      box-shadow: 14px 0 0 #FDCB6E, 28px 0 0 #00CEC9;
+    }
+    .code-key { color: #A29BFE; }
+    .code-str { color: #00CEC9; }
+    .code-comment { color: #555580; font-style: italic; }
+    .code-num { color: #FDCB6E; }
+
+    /* ===== Library Table ===== */
+    .lib-table {
+      width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.85rem;
+      background: var(--bg-card); border-radius: var(--radius); overflow: hidden;
+    }
+    .lib-table th {
+      text-align: left; padding: 1rem; background: rgba(108,92,231,0.1);
+      border-bottom: 2px solid var(--primary); font-size: 0.82rem; color: var(--primary-light);
+    }
+    .lib-table td {
+      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top;
+    }
+    .lib-table tr:last-child td { border-bottom: none; }
+    .lib-table tr:hover td { background: rgba(108,92,231,0.03); }
+    .lib-name { color: var(--text); font-weight: 500; font-family: var(--font-mono); font-size: 0.82rem; }
+    .lib-version { color: var(--accent); font-size: 0.78rem; font-family: var(--font-mono); }
+
+    /* ===== Timeline ===== */
+    .timeline { max-width: 800px; margin: 2rem auto 0; position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--accent)); opacity: 0.3;
+    }
+    .timeline-item { position: relative; padding: 0 0 2.5rem 2.2rem; }
+    .timeline-item:last-child { padding-bottom: 0; }
+    .timeline-dot {
+      position: absolute; left: -2px; top: 4px; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--bg); border: 3px solid var(--primary); z-index: 1;
+    }
+    .timeline-item:first-child .timeline-dot { background: var(--primary); box-shadow: 0 0 12px rgba(108,92,231,0.5); }
+    .timeline-version { font-size: 0.78rem; font-weight: 700; color: var(--primary-light); margin-bottom: 0.2rem; }
+    .timeline-date { font-size: 0.72rem; color: var(--text-secondary); opacity: 0.7; margin-bottom: 0.2rem; }
+    .timeline-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .timeline-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7; }
+    .timeline-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+    .timeline-tag {
+      padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 500;
+    }
+    .timeline-tag.new { background: rgba(0,206,201,0.15); color: #00CEC9; }
+    .timeline-tag.fix { background: rgba(255,107,107,0.15); color: #FF6B6B; }
+    .timeline-tag.refactor { background: rgba(253,203,110,0.15); color: #FDCB6E; }
+    .timeline-tag.perf { background: rgba(108,92,231,0.15); color: #A29BFE; }
+
+    /* ===== Test Data Grid ===== */
+    .test-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem; margin-top: 2rem;
+    }
+    .test-card {
+      padding: 1.8rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); text-align: center; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .test-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: var(--gradient-1); opacity: 0; transition: opacity 0.3s;
+    }
+    .test-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .test-card:hover::after { opacity: 1; }
+    .test-value { font-size: 2.2rem; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .test-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem; }
+    .test-desc { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0.2rem; }
+
+    /* ===== Open Source Cards ===== */
+    .oss-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem; margin-top: 2rem;
+    }
+    .oss-card {
+      padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); transition: all 0.3s; display: block; text-decoration: none; color: var(--text);
+    }
+    .oss-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: var(--shadow); }
+    .oss-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.4rem; }
+    .oss-source { font-size: 0.75rem; color: var(--accent); margin-bottom: 0.5rem; }
+    .oss-card p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.7; }
+
+    /* ===== Video Section ===== */
+    .video-container {
+      max-width: 800px; margin: 2rem auto 0; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+    }
+    .video-embed { position: relative; padding-bottom: 56.25%; height: 0; }
+    .video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-info { padding: 1.5rem 2rem; }
+    .video-info h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+    .video-info p { color: var(--text-secondary); font-size: 0.88rem; }
+
+    /* ===== Link Cards ===== */
+    .link-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem; margin-top: 2rem;
+    }
+    .link-card {
+      padding: 1.8rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); text-align: center; transition: all 0.4s;
+      text-decoration: none; color: var(--text); display: block; position: relative; overflow: hidden;
+    }
+    .link-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .link-card:nth-child(1)::before { background: #FF6B6B; }
+    .link-card:nth-child(2)::before { background: #00CEC9; }
+    .link-card:nth-child(3)::before { background: #6C5CE7; }
+    .link-card:nth-child(4)::before { background: #FDCB6E; }
+    .link-card:hover { transform: translateY(-4px); border-color: rgba(108,92,231,0.4); box-shadow: var(--shadow); }
+    .link-card:hover::before { opacity: 1; }
+    .link-icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; }
+    .link-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
+    .link-card p { color: var(--text-secondary); font-size: 0.82rem; }
+    .link-url { font-size: 0.78rem; color: var(--accent); margin-top: 0.5rem; font-family: monospace; }
+
+    /* ===== Comparison Cards ===== */
+    .compare-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 2rem;
+    }
+    .compare-card {
+      padding: 2rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); transition: all 0.3s;
+    }
+    .compare-card:hover { border-color: rgba(108,92,231,0.4); }
+    .compare-card h4 { font-size: 1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+    .compare-card ul { list-style: none; padding: 0; }
+    .compare-card li {
+      padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;
+      border-bottom: 1px solid rgba(108,92,231,0.1); display: flex; gap: 0.5rem;
+    }
+    .compare-card li:last-child { border-bottom: none; }
+    .compare-card li::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); margin-top: 0.5rem; }
+    .compare-card.accent li::before { background: var(--accent); }
+
+    /* ===== Divider ===== */
+    .section-divider {
+      max-width: 120px; height: 1px; margin: 0 auto; padding: 3rem 0;
+      background: linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+      opacity: 0.4; position: relative;
+    }
+    .section-divider::before {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 6px; height: 6px; background: var(--primary); border-radius: 50%;
+      box-shadow: 0 0 12px rgba(108,92,231,0.5);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      padding: 2rem; text-align: center; border-top: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 0.82rem;
+    }
+    footer a { color: var(--primary-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ===== Animations ===== */
+    .fade-in { opacity: 0; transform: translateY(25px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== Inline Code ===== */
+    code {
+      font-family: var(--font-mono); font-size: 0.82em;
+      padding: 0.15rem 0.45rem; background: rgba(108,92,231,0.12);
+      border: 1px solid rgba(108,92,231,0.15); border-radius: 4px;
+      color: var(--primary-light);
+    }
+    .compare-card li code { font-size: 0.78em; }
+
+    /* ===== HERO Neural Network SVG ===== */
+    .hero-neural-net {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .hero-neural-net svg { width: 100%; height: 100%; }
+    .neural-node { animation: neuralPulse 3s ease-in-out infinite; }
+    .neural-node:nth-child(odd) { animation-delay: 0.5s; }
+    .neural-node:nth-child(3n) { animation-delay: 1.2s; }
+    @keyframes neuralPulse {
+      0%,100% { opacity: 0.15; r: 3; }
+      50% { opacity: 0.5; r: 4.5; }
+    }
+    .neural-edge { animation: edgeGlow 4s ease-in-out infinite; }
+    .neural-edge:nth-child(even) { animation-delay: 1s; }
+    @keyframes edgeGlow {
+      0%,100% { stroke-opacity: 0.04; }
+      50% { stroke-opacity: 0.12; }
+    }
+
+    /* ===== Holographic shimmer on hero h1 ===== */
+    .tech-hero h1 {
+      position: relative; display: inline-block;
+    }
+    .tech-hero h1 .gradient-text {
+      background: linear-gradient(
+        90deg,
+        #6C5CE7 0%, #A29BFE 20%, #00CEC9 40%,
+        #81ECEC 50%, #00CEC9 60%, #A29BFE 80%, #6C5CE7 100%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: holoShift 4s linear infinite;
+    }
+    @keyframes holoShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* ===== Section header glow particles ===== */
+    .section-header { position: relative; }
+    .header-glow {
+      position: absolute; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(108,92,231,0.3);
+      animation: glowFloat 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .header-glow:nth-child(1) { top: -8px; left: 30%; animation-delay: 0s; background: var(--primary); box-shadow: 0 0 10px var(--primary), 0 0 20px rgba(108,92,231,0.3); }
+    .header-glow:nth-child(2) { top: 50%; right: 25%; animation-delay: 2s; background: var(--accent); box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(0,206,201,0.3); }
+    .header-glow:nth-child(3) { bottom: -5px; left: 50%; animation-delay: 4s; background: #A29BFE; box-shadow: 0 0 10px #A29BFE, 0 0 20px rgba(162,155,254,0.3); }
+    @keyframes glowFloat {
+      0%,100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+      25% { transform: translate(8px, -6px) scale(1.3); opacity: 1; }
+      50% { transform: translate(-4px, 4px) scale(0.8); opacity: 0.4; }
+      75% { transform: translate(6px, 2px) scale(1.1); opacity: 0.8; }
+    }
+
+    /* ===== Animated gradient border on pipeline stages ===== */
+    .pipeline-stage {
+      position: relative;
+      background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                  linear-gradient(135deg, rgba(108,92,231,0.3), rgba(0,206,201,0.1), rgba(108,92,231,0.3)) border-box;
+      border: 1px solid transparent;
+    }
+    .pipeline-stage::after {
+      content: ''; position: absolute; inset: -1px; border-radius: var(--radius); padding: 1px;
+      background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary));
+      background-size: 300% 300%;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      animation: borderShift 6s linear infinite;
+      pointer-events: none; opacity: 0.35;
+    }
+    .pipeline-stage:hover::after { opacity: 0.7; }
+    @keyframes borderShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ===== Circuit board code block ===== */
+    .code-block {
+      position: relative;
+      border: 1px solid transparent;
+      background:
+        linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+        linear-gradient(135deg, var(--primary), rgba(0,206,201,0.5), var(--primary)) border-box;
+      border-radius: 12px;
+    }
+    .code-block::after {
+      content: ''; position: absolute; top: -8px; right: -8px; bottom: -8px; width: 40px;
+      border-right: 2px dashed rgba(108,92,231,0.15);
+      border-top: 2px dashed rgba(108,92,231,0.15);
+      border-radius: 0 12px 0 0;
+      pointer-events: none;
+    }
+
+    /* ===== Math formula section background ===== */
+    .section-formula-bg {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+    }
+    .formula-watermark {
+      position: absolute; font-family: var(--font-mono); color: rgba(108,92,231,0.025);
+      font-size: clamp(10px, 1.5vw, 16px); white-space: nowrap; user-select: none;
+      animation: formulaSlide 40s linear infinite;
+    }
+    .formula-watermark:nth-child(2) { top: 25%; animation-delay: -10s; color: rgba(0,206,201,0.02); }
+    .formula-watermark:nth-child(3) { top: 50%; animation-delay: -20s; }
+    .formula-watermark:nth-child(4) { top: 75%; animation-delay: -30s; color: rgba(0,206,201,0.02); }
+    @keyframes formulaSlide {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-200%); }
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .philosophy-grid, .compare-grid { grid-template-columns: 1fr; }
+      .pipeline-stage { grid-template-columns: 1fr; }
+      .stage-num { width: 48px; height: 48px; font-size: 1.1rem; }
+      .test-grid { grid-template-columns: repeat(2, 1fr); }
+      .tech-hero { min-height: 45vh; padding: 6rem 2rem 2rem; }
+    }
+    @media (max-width: 480px) {
+      .test-grid { grid-template-columns: 1fr; }
+      .link-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Reading Progress -->
+<div class="reading-progress" id="readingProgress"></div>
+<!-- Matrix Grid Background -->
+<div class="matrix-bg"></div>
+<!-- Floating Math Symbols -->
+<div class="floating-symbols" id="floatingSymbols"></div>
+<!-- Cursor Glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="url(#g1)"/><path d="M8 22L16 10L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="17" r="2" fill="white"/><defs><linearGradient id="g1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#6C5CE7"/><stop offset="1" stop-color="#00CEC9"/></linearGradient></defs></svg>
+    MathMate
+  </a>
+  <ul class="nav-links">
+    <li><a href="#philosophy">设计思路</a></li>
+    <li><a href="#pipeline-deep">技术路径</a></li>
+    <li><a href="#libraries">外源库</a></li>
+    <li><a href="#models">AI 模型选型</a></li>
+    <li><a href="#iteration">迭代过程</a></li>
+    <li><a href="#testing">测试数据</a></li>
+    <li><a href="#opensource">开源参考</a></li>
+    <li><a href="#links">视频与链接</a></li>
+  </ul>
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    返回首页
+  </a>
+</nav>
+
+<!-- ====== Hero ====== -->
+<section class="tech-hero" id="top">
+  <!-- Neural Network SVG Decoration -->
+  <div class="hero-neural-net">
+    <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <!-- Layer 1 (left) -->
+      <circle class="neural-node" cx="120" cy="100" r="3" fill="#6C5CE7"/>
+      <circle class="neural-node" cx="120" cy="200" r="3" fill="#6C5CE7"/>
+      <circle class="neural-node" cx="120" cy="300" r="3" fill="#6C5CE7"/>
+      <circle class="neural-node" cx="120" cy="400" r="3" fill="#6C5CE7"/>
+      <circle class="neural-node" cx="120" cy="500" r="3" fill="#6C5CE7"/>
+      <!-- Layer 2 -->
+      <circle class="neural-node" cx="300" cy="80" r="3" fill="#A29BFE"/>
+      <circle class="neural-node" cx="300" cy="180" r="3" fill="#A29BFE"/>
+      <circle class="neural-node" cx="300" cy="300" r="3" fill="#A29BFE"/>
+      <circle class="neural-node" cx="300" cy="420" r="3" fill="#A29BFE"/>
+      <circle class="neural-node" cx="300" cy="520" r="3" fill="#A29BFE"/>
+      <!-- Layer 3 -->
+      <circle class="neural-node" cx="500" cy="150" r="3" fill="#00CEC9"/>
+      <circle class="neural-node" cx="500" cy="300" r="3" fill="#00CEC9"/>
+      <circle class="neural-node" cx="500" cy="450" r="3" fill="#00CEC9"/>
+      <!-- Layer 4 (right) -->
+      <circle class="neural-node" cx="720" cy="120" r="3" fill="#81ECEC"/>
+      <circle class="neural-node" cx="720" cy="250" r="3" fill="#81ECEC"/>
+      <circle class="neural-node" cx="720" cy="380" r="3" fill="#81ECEC"/>
+      <circle class="neural-node" cx="720" cy="500" r="3" fill="#81ECEC"/>
+      <!-- Output -->
+      <circle class="neural-node" cx="920" cy="200" r="3" fill="#6C5CE7"/>
+      <circle class="neural-node" cx="920" cy="400" r="3" fill="#00CEC9"/>
+      <!-- Edges L1→L2 -->
+      <line class="neural-edge" x1="120" y1="100" x2="300" y2="80" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="120" y1="100" x2="300" y2="180" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="120" y1="200" x2="300" y2="180" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="120" y1="200" x2="300" y2="300" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="120" y1="300" x2="300" y2="300" stroke="#A29BFE" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="120" y1="300" x2="300" y2="420" stroke="#A29BFE" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="120" y1="400" x2="300" y2="420" stroke="#A29BFE" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="120" y1="400" x2="300" y2="520" stroke="#A29BFE" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="120" y1="500" x2="300" y2="520" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="120" y1="100" x2="300" y2="300" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.03"/>
+      <line class="neural-edge" x1="120" y1="500" x2="300" y2="300" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.03"/>
+      <!-- Edges L2→L3 -->
+      <line class="neural-edge" x1="300" y1="80" x2="500" y2="150" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="300" y1="180" x2="500" y2="150" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="300" y1="180" x2="500" y2="300" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="300" y1="300" x2="500" y2="300" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.06"/>
+      <line class="neural-edge" x1="300" y1="300" x2="500" y2="450" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="300" y1="420" x2="500" y2="450" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="300" y1="520" x2="500" y2="450" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="300" y1="80" x2="500" y2="300" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.03"/>
+      <line class="neural-edge" x1="300" y1="520" x2="500" y2="300" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.03"/>
+      <!-- Edges L3→L4 -->
+      <line class="neural-edge" x1="500" y1="150" x2="720" y2="120" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="500" y1="150" x2="720" y2="250" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="500" y1="300" x2="720" y2="250" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="500" y1="300" x2="720" y2="380" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="500" y1="450" x2="720" y2="380" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="500" y1="450" x2="720" y2="500" stroke="#81ECEC" stroke-width="0.5" stroke-opacity="0.05"/>
+      <!-- Edges L4→Output -->
+      <line class="neural-edge" x1="720" y1="120" x2="920" y2="200" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="720" y1="250" x2="920" y2="200" stroke="#6C5CE7" stroke-width="0.5" stroke-opacity="0.04"/>
+      <line class="neural-edge" x1="720" y1="380" x2="920" y2="400" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.05"/>
+      <line class="neural-edge" x1="720" y1="500" x2="920" y2="400" stroke="#00CEC9" stroke-width="0.5" stroke-opacity="0.04"/>
+      <!-- Floating math annotations -->
+      <text x="60" y="60" fill="rgba(108,92,231,0.08)" font-family="monospace" font-size="11">f(x)=ax²+bx+c</text>
+      <text x="380" y="50" fill="rgba(0,206,201,0.07)" font-family="monospace" font-size="11">∇×E = -∂B/∂t</text>
+      <text x="800" y="60" fill="rgba(108,92,231,0.07)" font-family="monospace" font-size="11">∫₀^∞ e^(-x²) dx = √π/2</text>
+      <text x="100" y="580" fill="rgba(0,206,201,0.06)" font-family="monospace" font-size="10">σ(z) = 1/(1+e^(-z))</text>
+      <text x="550" y="580" fill="rgba(108,92,231,0.06)" font-family="monospace" font-size="10">∂L/∂w = ∑(ŷ-y)x</text>
+      <text x="900" y="560" fill="rgba(0,206,201,0.06)" font-family="monospace" font-size="10">P(A|B) = P(B|A)P(A)/P(B)</text>
+    </svg>
+  </div>
+  <div class="tech-hero-content fade-in">
+    <div class="section-label">Technical Deep Dive</div>
+    <h1>技术<span class="gradient-text">详解</span></h1>
+    <p>深入剖析 MathMate 的技术选型、设计思路、核心路径、迭代过程与开源参考。从 Flutter 原生可视化引擎到多模型协作 AI 流水线，完整呈现技术全貌。</p>
+    <div class="quick-nav">
+      <a href="#philosophy">设计思路</a>
+      <a href="#pipeline-deep">技术路径</a>
+      <a href="#libraries">外源库引用</a>
+      <a href="#models">AI 模型选型</a>
+      <a href="#iteration">迭代历程</a>
+      <a href="#testing">测试数据</a>
+      <a href="#opensource">开源参考</a>
+      <a href="#links">视频与链接</a>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Section 1: 设计思路 ====== -->
+<section class="section" id="philosophy">
+  <div class="section-formula-bg">
+    <div class="formula-watermark">E = mc² &nbsp; ∫ sin(x)dx = -cos(x)+C &nbsp; ∑(n=0→∞) xⁿ/n! = eˣ &nbsp; det(A) = |a₁₁ a₁₂; a₂₁ a₂₂| &nbsp; ∀ε&gt;0 ∃δ&gt;0 &nbsp; lim(n→∞) (1+1/n)ⁿ = e</div>
+    <div class="formula-watermark">Δ = b²-4ac &nbsp; cos²θ+sin²θ = 1 &nbsp; ∮ F·ds = ∫∫ (∇×F)·dA &nbsp; aⁿ·aᵐ = aⁿ⁺ᵐ &nbsp; log(ab) = log(a)+log(b) &nbsp; ∑(k=1→n) k = n(n+1)/2</div>
+    <div class="formula-watermark">dy/dx = lim(Δx→0) [f(x+Δx)-f(x)]/Δx &nbsp; |x| = √(x²) &nbsp; C(n,r) = n!/(r!(n-r)!) &nbsp; eⁱᶿ = cosθ+i·sinθ</div>
+    <div class="formula-watermark">∇f = (∂f/∂x, ∂f/∂y, ∂f/∂z) &nbsp; ∫∫∫ ρ dV = M &nbsp; P(A∪B) = P(A)+P(B)-P(A∩B) &nbsp; λ = h/p &nbsp; S = k·ln(W)</div>
+  </div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="header-glow"></div><div class="header-glow"></div><div class="header-glow"></div>
+      <div class="section-label">Design Philosophy</div>
+      <h2>设计思路与核心决策</h2>
+      <p>每一个技术选型背后都有明确的取舍逻辑</p>
+    </div>
+    <div class="philosophy-grid">
+      <div class="philosophy-card fade-in">
+        <h3><span class="philosophy-icon">🎯</span> Flutter 原生优先</h3>
+        <p>选择 Flutter 作为唯一前端框架，而非 React Native 或原生开发。核心考量：Canvas 绘图能力是几何可视化引擎的基石，Flutter 的 <code>CustomPaint</code> + <code>Canvas</code> API 提供了 60fps 的原生渲染性能，无需 WebView 中间层。一套代码覆盖 Android、iOS、Web、桌面全平台。</p>
+      </div>
+      <div class="philosophy-card fade-in">
+        <h3><span class="philosophy-icon">🧩</span> 无外部状态管理</h3>
+        <p>不引入 Provider、Riverpod、Bloc 等状态管理框架。全部使用 <code>StatefulWidget</code> + <code>setState</code>。理由：MathMate 的页面间数据流是单向的（拍照 → 识别 → 解题 → 展示），没有复杂的全局状态共享需求。减少依赖、降低复杂度、提升可维护性。</p>
+      </div>
+      <div class="philosophy-card fade-in">
+        <h3><span class="philosophy-icon">🔗</span> 自研可视化引擎</h3>
+        <p>拒绝使用现成图表库，从零构建 <code>GeometryPainter</code>。原因：通用图表库无法理解数学语义（如"动点在圆上滑动"的约束关系）。自研引擎实现了 <strong>GeometryJSON 协议</strong>——AI 输出结构化 JSON，引擎解析并渲染为交互式几何图形，形成"语义-图形"的完整闭环。</p>
+      </div>
+      <div class="philosophy-card fade-in">
+        <h3><span class="philosophy-icon">🤖</span> 多模型协作流水线</h3>
+        <p>没有将所有 AI 任务绑定到单一模型，而是根据各模型的优势分配任务：<strong>DeepSeek</strong> 负责数学推理（解题+可视化），<strong>火山引擎</strong> 负责多模态 OCR（手写/印刷识别），<strong>Qwen-PLUS</strong> 负责流式对话。每个模型在各自领域做到最优，整体效果超越单模型方案。</p>
+      </div>
+      <div class="philosophy-card fade-in">
+        <h3><span class="philosophy-icon">💾</span> 纯本地数据架构</h3>
+        <p>不依赖云数据库或后端服务器。全部数据存储在本地：<strong>Hive</strong> 用于结构化数据（搜题历史、对话记录），<strong>SharedPreferences</strong> 用于键值偏好（主题、年级、用户设置）。优势：零服务器成本、用户数据完全本地化、离线可用、隐私安全。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 2: 技术路径 ====== -->
+<section class="section" id="pipeline-deep">
+  <div class="section-bg-glow"></div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="header-glow"></div><div class="header-glow"></div><div class="header-glow"></div>
+      <div class="section-label">Technical Path</div>
+      <h2>核心技术路径</h2>
+      <p>从拍照到交互式可视化的三阶段 AI 流水线</p>
+    </div>
+
+    <div class="pipeline-detail">
+      <!-- Stage 1 -->
+      <div class="pipeline-stage fade-in">
+        <div class="stage-num s1">1</div>
+        <div class="stage-content">
+          <h3>多模态 OCR 识别</h3>
+          <p>用户拍照后，图片经过裁剪与预处理（自动透视校正、自适应锐化、背景二值化），送入火山引擎多模态 API。AI 将手写或印刷的数学公式、文字识别为结构化的 Markdown + LaTeX 文本。<code>SafeJsonParser</code> 容错处理 AI 返回的非标准 JSON（如 <code>Infinity</code>、<code>NaN</code>）。</p>
+          <div class="stage-tech">
+            <span>Volc Engine API</span>
+            <span>OcrService</span>
+            <span>SafeJsonParser</span>
+            <span>图像预处理管线</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="pipeline-stage fade-in">
+        <div class="stage-num s2">2</div>
+        <div class="stage-content">
+          <h3>AI 分步解题推理</h3>
+          <p>OCR 识别的数学文本送入 DeepSeek API，配合专门设计的解题 System Prompt（<code>solve_prompt.dart</code>）。AI 执行分步推理，输出完整的 Markdown 解题过程，包含 LaTeX 公式、步骤说明和最终答案。支持小学到大学各难度层级的数学题。</p>
+          <div class="stage-tech">
+            <span>DeepSeek API</span>
+            <span>SolverService</span>
+            <span>Chain-of-Thought 推理</span>
+            <span>专用 Prompt 模板</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="pipeline-stage fade-in">
+        <div class="stage-num s3">3</div>
+        <div class="stage-content">
+          <h3>GeometryJSON 可视化生成与渲染</h3>
+          <p>这是 MathMate 的技术核心。AI 将题目中的几何语义转化为结构化的 <strong>GeometryJSON</strong> 协议——定义视口（viewport）、几何元素（点、线、圆、椭圆、双曲线、抛物线）、动态约束（动点在曲线上滑动）。<code>GeometryValidator</code> 校验 JSON 合法性，<code>GeometryPainter</code> 使用纯 Dart Canvas 渲染为 60fps 交互式图形，支持手势拖拽动点。</p>
+          <div class="stage-tech">
+            <span>GeometryJSON 协议</span>
+            <span>VisualizationService</span>
+            <span>GeometryPainter</span>
+            <span>GeometryValidator</span>
+            <span>Constraint Solver</span>
+            <span>GestureDetector</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GeometryJSON Protocol Example -->
+    <div class="code-block fade-in" style="margin-top:2rem;">
+      <div class="code-label">// GeometryJSON 协议示例 — AI 输出的结构化几何描述</div>
+<span class="code-key">{</span>
+  <span class="code-str">"viewport"</span>: { <span class="code-str">"xMin"</span>: <span class="code-num">-5</span>, <span class="code-str">"xMax"</span>: <span class="code-num">5</span>, <span class="code-str">"yMin"</span>: <span class="code-num">-5</span>, <span class="code-str">"yMax"</span>: <span class="code-num">5</span> },
+  <span class="code-str">"elements"</span>: [
+    { <span class="code-str">"type"</span>: <span class="code-str">"point"</span>, <span class="code-str">"id"</span>: <span class="code-str">"A"</span>, <span class="code-str">"x"</span>: <span class="code-num">-3</span>, <span class="code-str">"y"</span>: <span class="code-num">0</span> },
+    { <span class="code-str">"type"</span>: <span class="code-str">"point"</span>, <span class="code-str">"id"</span>: <span class="code-str">"B"</span>, <span class="code-str">"x"</span>: <span class="code-num">3</span>, <span class="code-str">"y"</span>: <span class="code-num">0</span> },
+    { <span class="code-str">"type"</span>: <span class="code-str">"circle"</span>, <span class="code-str">"id"</span>: <span class="code-str">"c1"</span>, <span class="code-str">"cx"</span>: <span class="code-num">0</span>, <span class="code-str">"cy"</span>: <span class="code-num">0</span>, <span class="code-str">"r"</span>: <span class="code-num">3</span> },
+    {
+      <span class="code-str">"type"</span>: <span class="code-str">"dynamic_point"</span>, <span class="code-str">"id"</span>: <span class="code-str">"P"</span>,
+      <span class="code-str">"constraint"</span>: { <span class="code-str">"target"</span>: <span class="code-str">"c1"</span>, <span class="code-str">"param"</span>: <span class="code-num">0.785</span> }
+      <span class="code-comment">// 动点P约束在圆c1上，可拖拽交互</span>
+    }
+  ]
+<span class="code-key">}</span>
+    </div>
+
+    <!-- Visualization Engine Architecture -->
+    <div class="section-header fade-in" style="margin-top:4rem;">
+      <div class="section-label">Visualization Engine</div>
+      <h2>自研可视化引擎架构</h2>
+      <p>纯 Dart + Flutter Canvas，零 WebView 依赖，原生 60fps</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card fade-in">
+        <h4>📐 数据模型层</h4>
+        <ul>
+          <li>抽象 <code>GeoElement</code> 基类</li>
+          <li><code>GeoPoint</code> — 静态点（固定坐标）</li>
+          <li><code>GeoCircle</code> — 圆（圆心+半径）</li>
+          <li><code>DynamicPoint</code> — 动点（含约束目标 ID + 参数化位置）</li>
+          <li>支持：线、椭圆、双曲线、抛物线</li>
+        </ul>
+      </div>
+      <div class="compare-card accent fade-in">
+        <h4>🔄 约束求解器</h4>
+        <ul>
+          <li>用户拖拽动点时触发约束求解</li>
+          <li>计算动点在约束目标上的最近合法位置</li>
+          <li>投影到圆弧 / 线段 / 曲线</li>
+          <li>纯 Dart 数学计算，无外部依赖</li>
+          <li>实时 <code>setState</code> 触发重绘</li>
+        </ul>
+      </div>
+      <div class="compare-card fade-in">
+        <h4>🎨 交互式渲染器</h4>
+        <ul>
+          <li><code>CustomPaint</code> + <code>GestureDetector</code></li>
+          <li>触摸查找最近动点 → 拖拽 → 约束求解 → 重绘</li>
+          <li>坐标系自动缩放适配 viewport</li>
+          <li>60fps 原生帧率</li>
+          <li>支持缩放、平移手势</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Four-phase implementation -->
+    <div style="margin-top:3rem;" class="fade-in">
+      <h3 style="text-align:center;font-size:1.1rem;margin-bottom:1.5rem;">可视化引擎四阶段实现路径</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+        <div style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);border-top:3px solid #6C5CE7;">
+          <div style="font-size:0.75rem;color:var(--primary-light);font-weight:700;margin-bottom:0.3rem;">Phase 1</div>
+          <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">JSON 协议定义</h4>
+          <p style="font-size:0.82rem;color:var(--text-secondary);">设计 LLM 友好的 GeometryJSON Schema，包含 viewport、elements、constraint 语义</p>
+        </div>
+        <div style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);border-top:3px solid #00CEC9;">
+          <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-bottom:0.3rem;">Phase 2</div>
+          <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">Prompt 工程</h4>
+          <p style="font-size:0.82rem;color:var(--text-secondary);">注入"几何翻译家"System Prompt，强制 AI 输出严格格式的 GeometryJSON</p>
+        </div>
+        <div style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);border-top:3px solid #FF6B6B;">
+          <div style="font-size:0.75rem;color:#FF6B6B;font-weight:700;margin-bottom:0.3rem;">Phase 3</div>
+          <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">Flutter 引擎实现</h4>
+          <p style="font-size:0.82rem;color:var(--text-secondary);">CustomPainter 渲染 + GestureDetector 交互 + 约束求解器</p>
+        </div>
+        <div style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);border-top:3px solid #FDCB6E;">
+          <div style="font-size:0.75rem;color:#FDCB6E;font-weight:700;margin-bottom:0.3rem;">Phase 4</div>
+          <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">UI/UX 打磨</h4>
+          <p style="font-size:0.82rem;color:var(--text-secondary);">流式渲染、触觉反馈、实时 LaTeX 标签、异常降级处理</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 3: 外源库引用 ====== -->
+<section class="section" id="libraries">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="header-glow"></div><div class="header-glow"></div><div class="header-glow"></div>
+      <div class="section-label">External Libraries</div>
+      <h2>外源库引用清单</h2>
+      <p>所有第三方依赖均经过选型评估，按需引入</p>
+    </div>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#6C5CE7;"></span>
+      核心框架
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>版本</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">Flutter SDK</td><td class="lib-version">Dart ^3.11.3</td><td>跨平台 UI 框架，Android / iOS / Web / Desktop 全平台构建</td></tr>
+        <tr><td class="lib-name">flutter_localizations</td><td class="lib-version">SDK 内置</td><td>多语言本地化支持（zh_CN / en_US）</td></tr>
+        <tr><td class="lib-name">cupertino_icons</td><td class="lib-version">^1.0.8</td><td>iOS 风格图标集（CupertinoIcons）</td></tr>
+        <tr><td class="lib-name">http</td><td class="lib-version">^1.1.0</td><td>HTTP 客户端，调用 DeepSeek / 火山引擎 / Qwen API</td></tr>
+        <tr><td class="lib-name">path</td><td class="lib-version">^1.9.1</td><td>跨平台路径操作工具（文件路径拼接、解析）</td></tr>
+        <tr><td class="lib-name">flutter_dotenv</td><td class="lib-version">^5.2.1</td><td>从 <code>.env</code> 文件加载 API 密钥，安全隔离敏感配置</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#00CEC9;"></span>
+      AI 与数据处理
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>版本</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">flutter_math_fork</td><td class="lib-version">^0.7.2+1</td><td>LaTeX / MathML 数学公式渲染（计划迁移至 flutter_tex）</td></tr>
+        <tr><td class="lib-name">flutter_markdown_plus</td><td class="lib-version">^1.0.7</td><td>Markdown 内容渲染，支持代码高亮和 LaTeX 行内公式</td></tr>
+        <tr><td class="lib-name">image</td><td class="lib-version">^4.5.4</td><td>图像处理库，用于拍照后的裁剪、缩放、预处理</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#FF6B6B;"></span>
+      数据存储与持久化
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>版本</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">hive</td><td class="lib-version">^2.2.3</td><td>高性能本地 NoSQL 数据库，存储搜题历史与 AI 对话记录（v2.2.0 从 Isar 迁移）</td></tr>
+        <tr><td class="lib-name">hive_flutter</td><td class="lib-version">^1.1.0</td><td>Hive Flutter 绑定，提供 Widgets 集成</td></tr>
+        <tr><td class="lib-name">shared_preferences</td><td class="lib-version">^2.5.3</td><td>键值对持久化，存储用户主题/年级/设置等偏好</td></tr>
+        <tr><td class="lib-name">path_provider</td><td class="lib-version">^2.1.5</td><td>跨平台文件路径获取，数据存储目录管理</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#FDCB6E;"></span>
+      UI 组件与交互
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>版本</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">webview_flutter</td><td class="lib-version">^4.10.0</td><td>内嵌 WebView，用于 GeoGebra 数学工具箱、KaTeX 公式可视化、B 站视频播放</td></tr>
+        <tr><td class="lib-name">flutter_quill</td><td class="lib-version">^11.5.0</td><td>富文本编辑器，支持 LaTeX 公式插入、图片、格式化</td></tr>
+        <tr><td class="lib-name">image_picker</td><td class="lib-version">^1.0.0</td><td>相机拍照与相册选取，拍照搜题入口</td></tr>
+        <tr><td class="lib-name">cached_network_image</td><td class="lib-version">^3.4.1</td><td>网络图片缓存加载，视频缩略图等</td></tr>
+        <tr><td class="lib-name">pdf</td><td class="lib-version">^3.11.3</td><td>PDF 文档生成，支持 KaTeX 公式到 PDF 导出</td></tr>
+        <tr><td class="lib-name">file_picker</td><td class="lib-version">^8.0.0</td><td>文件选择器，PDF 导入等</td></tr>
+        <tr><td class="lib-name">url_launcher</td><td class="lib-version">^6.3.1</td><td>打开外部链接（B 站视频、浏览器等）</td></tr>
+        <tr><td class="lib-name">share_plus</td><td class="lib-version">^10.1.4</td><td>系统分享功能，分享解题结果</td></tr>
+        <tr><td class="lib-name">permission_handler</td><td class="lib-version">^11.3.1</td><td>运行时权限管理（相机、存储等）</td></tr>
+        <tr><td class="lib-name">device_info_plus</td><td class="lib-version">^11.0.0</td><td>设备信息获取，生成唯一设备 ID</td></tr>
+        <tr><td class="lib-name">open_file</td><td class="lib-version">^3.5.10</td><td>打开本地文件（PDF 等）</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#A29BFE;"></span>
+      开发工具链
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>版本</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">build_runner</td><td class="lib-version">^2.4.13</td><td>Dart 代码生成工具，为 Hive 生成序列化代码</td></tr>
+        <tr><td class="lib-name">hive_generator</td><td class="lib-version">^2.0.1</td><td>Hive TypeAdapter 代码生成器</td></tr>
+        <tr><td class="lib-name">flutter_launcher_icons</td><td class="lib-version">^0.14.2</td><td>自动生成多平台应用图标</td></tr>
+        <tr><td class="lib-name">flutter_lints</td><td class="lib-version">^6.0.0</td><td>Flutter 官方 lint 规则集</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#81ECEC;"></span>
+      内嵌第三方资源
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>资源</th><th>类型</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">GeoGebra Web3D</td><td class="lib-version">离线嵌入 · GPL v3</td><td>数学可视化工具套件（科学计算器、几何画板、函数绘图、3D 视图、尺规作图、概率模型）。内含 canvas2pdf、gifshot、whammy、webfont.js 等子库</td></tr>
+        <tr><td class="lib-name">KaTeX</td><td class="lib-version">离线嵌入 · MIT</td><td>高速 LaTeX 数学公式渲染，用于 WebView 中的公式可视化与 PDF 导出</td></tr>
+        <tr><td class="lib-name">PDF.js</td><td class="lib-version">离线嵌入 · Apache 2.0</td><td>Mozilla 出品的 PDF 渲染引擎，用于应用内 PDF 查看与标注</td></tr>
+        <tr><td class="lib-name">SimHei 字体</td><td class="lib-version">离线嵌入</td><td>中文黑体字体，用于 LaTeX 编译器生成含中文的 PDF 文档</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#FF6B6B;"></span>
+      CDN 运行时依赖
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>库名</th><th>协议</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">Plotly.js v2.27.0</td><td class="lib-version">MIT</td><td>交互式数据可视化图表，用于手写笔记中公式分析的 WebView 可视化</td></tr>
+        <tr><td class="lib-name">Chart.js</td><td class="lib-version">MIT</td><td>HTML5 Canvas 图表库，用于手写笔记中的图表渲染</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#FDCB6E;"></span>
+      外部 API 服务
+    </h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>服务</th><th>接入方式</th><th>用途</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">Bilibili API</td><td class="lib-version">公共接口</td><td>获取视频信息（标题、封面、播放量），用于视频推荐模块的元数据展示</td></tr>
+        <tr><td class="lib-name">Bilibili Player</td><td class="lib-version">iframe 嵌入</td><td>WebView 内嵌 B 站播放器，实现应用内视频学习</td></tr>
+        <tr><td class="lib-name">MathMate Web API Proxy</td><td class="lib-version">自建代理</td><td>Node.js 反向代理服务（<code>deploy/proxy_server.js</code>），运行于 mathmate.top 服务器。提供 <code>/api/deepseek</code>、<code>/api/vivo</code>、<code>/api/volc</code> 三条代理路由，将 Flutter Web 客户端请求转发至上游 AI API，在服务端注入真实 API Key，实现密钥安全隔离。Nginx 配置 120s 超时以适配 AI 长推理</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:2rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#00CEC9;"></span>
+      部署架构
+    </h3>
+    <div class="compare-card accent fade-in" style="margin-bottom:1rem;">
+      <h4>🌐 Web 端部署方案</h4>
+      <ul>
+        <li><strong>前端：</strong>Flutter Web 构建静态资源，部署至 <code>/var/www/mathmate</code>，Nginx SPA 模式托管</li>
+        <li><strong>API 代理：</strong>Node.js (<code>deploy/proxy_server.js</code>) 运行于 127.0.0.1:3001，PM2 守护进程管理</li>
+        <li><strong>密钥隔离：</strong>Web 构建使用 <code>.env.web</code>（API Key 设为 <code>web-proxy</code>，URL 指向 mathmate.top/api/*），真实密钥仅存储在服务端 <code>.env.server</code> 中</li>
+        <li><strong>反向代理：</strong>Nginx 将 <code>/api/*</code> 请求转发至 Node.js，<code>/*</code> 静态资源由 Nginx 直接服务（30 天缓存）</li>
+        <li><strong>HTTPS：</strong>Certbot 自动签发 Let's Encrypt 证书</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 4: AI 模型选型 ====== -->
+<section class="section" id="models">
+  <div class="section-bg-glow"></div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="header-glow"></div><div class="header-glow"></div><div class="header-glow"></div>
+      <div class="section-label">AI Model Selection</div>
+      <h2>AI 模型选型与依据</h2>
+      <p>三大模型各司其职，协同覆盖 OCR / 推理 / 对话全链路</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card fade-in">
+        <h4>🧠 DeepSeek — 核心推理引擎</h4>
+        <ul>
+          <li><strong>任务：</strong>数学解题 + 几何可视化 JSON 生成 + OCR 识别</li>
+          <li><strong>模型：</strong>deepseek-v4-flash (DeepSeek-V4) · 可切换 deepseek-chat</li>
+          <li><strong>选型依据：</strong>数学推理能力在开源模型中领先；MATH 基准 51.7%；API 成本极低（~0.02元/千token）；中文理解能力强</li>
+          <li><strong>调用方式：</strong>同步 HTTP 请求，超时 60 秒</li>
+          <li><strong>被使用于：</strong>DeepSeekService（OcrService、SolverService、VisualizationService 共用）</li>
+        </ul>
+      </div>
+      <div class="compare-card accent fade-in">
+        <h4>👁️ 火山引擎（豆包）— 多模态 AI</h4>
+        <ul>
+          <li><strong>任务：</strong>拍照 OCR 识别 + 手写识别 + 公式分析 + 数学识别</li>
+          <li><strong>模型：</strong>doubao-seed-2-0-pro-260215（通用推理）· doubao-seed-1-8-251228（OCR 专用，通过 <code>VOLC_OCR_MODEL_ID</code> 独立配置）</li>
+          <li><strong>选型依据：</strong>中文数学公式识别准确率高；支持手写体识别；多模态理解能力强（图片→结构化文本）；豆包系列模型中文语境深度优化</li>
+          <li><strong>调用方式：</strong>HTTP API，图片 Base64 编码上传；OCR 任务通过 <code>VOLC_OCR_MODEL_ID</code> 环境变量独立配置轻量模型，实现推理/OCR 按需分流</li>
+          <li><strong>被使用于：</strong>VolcAiClientService、HandwritingOcrService、FormulaAnalysisService、MathRecognizer</li>
+        </ul>
+      </div>
+      <div class="compare-card fade-in">
+        <h4>💬 Qwen（通义千问）— 流式对话 + 推荐引擎</h4>
+        <ul>
+          <li><strong>任务：</strong>AI 数学辅导对话 + 视频推荐 + 搜题历史标题生成</li>
+          <li><strong>模型：</strong>qwen3.6-flash-2026-04-16（默认）· 可切换 qwen-plus / qwen-turbo / qwen-max</li>
+          <li><strong>选型依据：</strong>低延迟流式输出（SSE）；OpenAI 兼容 API 接口；中文对话自然流畅；通过阿里云 DashScope 调用，稳定性高</li>
+          <li><strong>调用方式：</strong>Server-Sent Events (SSE) 流式响应</li>
+          <li><strong>被使用于：</strong>ChatStreamService、VivoChatService、VideoRecommendationService、HistoryRepository</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- AI Service Binding Table -->
+    <table class="lib-table fade-in" style="margin-top:2.5rem;">
+      <thead>
+        <tr><th>服务模块</th><th>AI 模型</th><th>输入</th><th>输出</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="lib-name">OcrService</td><td>火山引擎 / DeepSeek</td><td>拍照图片 (Base64)</td><td>Markdown + LaTeX 文本</td></tr>
+        <tr><td class="lib-name">SolverService</td><td>DeepSeek</td><td>数学题文本 + 解题 Prompt</td><td>分步解题 Markdown</td></tr>
+        <tr><td class="lib-name">VisualizationService</td><td>DeepSeek</td><td>解题结果 + 可视化 Prompt</td><td>GeometryJSON</td></tr>
+        <tr><td class="lib-name">ChatStreamService</td><td>Qwen-PLUS</td><td>多轮对话上下文</td><td>SSE 流式 Markdown</td></tr>
+        <tr><td class="lib-name">HandwritingOcrService</td><td>火山引擎</td><td>手写笔迹图片</td><td>LaTeX 公式文本</td></tr>
+        <tr><td class="lib-name">FormulaAnalysisService</td><td>火山引擎</td><td>单个数学公式</td><td>公式分析 + 解释</td></tr>
+        <tr><td class="lib-name">VideoRecommendationService</td><td>Qwen (DashScope)</td><td>搜索历史 + 年级</td><td>B 站视频推荐列表</td></tr>
+        <tr><td class="lib-name">HistoryRepository</td><td>Qwen (DashScope)</td><td>搜题结果文本</td><td>自动生成历史标题</td></tr>
+        <tr><td class="lib-name">MathRecognizer</td><td>火山引擎</td><td>数学图片</td><td>公式识别 + 结构化文本</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 5: 迭代过程 ====== -->
+<section class="section" id="iteration">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">Iteration History</div>
+      <h2>版本迭代历程</h2>
+      <p>13 个版本的持续演进，从核心流水线到全平台支持</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.1.0</div>
+        <div class="timeline-date">2026-05-02</div>
+        <div class="timeline-title">GeoGebra 工具箱集成</div>
+        <div class="timeline-desc">集成 GeoGebra 3D 计算器、科学计算器、概率计算器，新增 KaTeX 公式渲染资源。更新高中数学核心考点视频列表。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">GeoGebra</span><span class="timeline-tag new">KaTeX</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.2.0</div>
+        <div class="timeline-date">2026-05-02 ~ 05-06</div>
+        <div class="timeline-title">几何可视化引擎 + 新手引导</div>
+        <div class="timeline-desc">新增几何可视化模块与交互控制器、视频资源管理模块、新手引导页面。优化笔记编辑器和聊天交互。移除 Supabase 依赖。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">VisualizationController</span><span class="timeline-tag refactor">移除 Supabase</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.3.0</div>
+        <div class="timeline-date">2026-05-02</div>
+        <div class="timeline-title">手写笔记与 OCR 识别</div>
+        <div class="timeline-desc">全新手写笔记功能：多种纸张背景（空白/横线/网格）、笔迹平滑、橡皮擦、多色画笔。新增手写 OCR 识别服务，自动将笔迹转为文本。+1,271 行新增。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">手写笔记</span><span class="timeline-tag new">Catmull-Rom</span><span class="timeline-tag new">HandwritingOcr</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.4.0</div>
+        <div class="timeline-date">2026-05-02</div>
+        <div class="timeline-title">用户系统与公式分析</div>
+        <div class="timeline-desc">新增用户资料系统（头像、昵称、个性签名）、公式分析服务（AI 识别并解释数学公式）。优化账户设置与主题切换。+1,135 行新增。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">UserProfile</span><span class="timeline-tag new">FormulaAnalysis</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.5.0</div>
+        <div class="timeline-date">2026-05-03</div>
+        <div class="timeline-title">KaTeX PDF 服务重构</div>
+        <div class="timeline-desc">重构 KaTeX PDF 服务以支持更好的数学公式渲染。更新 Flutter 依赖包，改进跨平台插件支持（Windows/macOS/Linux）。</div>
+        <div class="timeline-tags"><span class="timeline-tag refactor">KaTeX PDF</span><span class="timeline-tag perf">跨平台优化</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.6.0</div>
+        <div class="timeline-date">2026-05-03</div>
+        <div class="timeline-title">PDF 查看器 + 手写笔记增强</div>
+        <div class="timeline-desc">新增 PDF 查看页面，支持查看数学文档。大幅增强手写笔记编辑器功能和流畅度。优化主题配置。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">PDF Viewer</span><span class="timeline-tag perf">手写流畅度</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.7.0</div>
+        <div class="timeline-date">2026-05-03</div>
+        <div class="timeline-title">UI/UX 全面优化</div>
+        <div class="timeline-desc">增强 PDF 查看器功能，改善手写笔记编辑器流畅度，优化聊天页面交互体验，修复多个 UI/UX 问题。</div>
+        <div class="timeline-tags"><span class="timeline-tag fix">多问题修复</span><span class="timeline-tag perf">UX 优化</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.8.0</div>
+        <div class="timeline-date">2026-05-05</div>
+        <div class="timeline-title">架构瘦身与视频系统</div>
+        <div class="timeline-desc">新增视频资源管理模块和教程页面。完全移除 Supabase 依赖。更新跨平台构建配置。改进视频推荐算法。标准化 Changelog 格式。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">视频推荐</span><span class="timeline-tag refactor">移除 Supabase</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v1.9.0</div>
+        <div class="timeline-date">2026-05-05</div>
+        <div class="timeline-title">性能与搜索优化</div>
+        <div class="timeline-desc">视觉设计改进，小屏幕移动端适配优化。新增搜索功能。优化应用启动性能和加载时间。重构项目结构以提升可维护性。</div>
+        <div class="timeline-tags"><span class="timeline-tag perf">启动优化</span><span class="timeline-tag new">搜索功能</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v2.1.0</div>
+        <div class="timeline-date">2026-05-05</div>
+        <div class="timeline-title">外部 API 集成</div>
+        <div class="timeline-desc">新增外部 API 服务集成。添加 device_info_plus 实现设备 ID 初始化（Android/iOS 设备识别）。移除裁剪选框大小限制。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">Device ID</span><span class="timeline-tag fix">裁剪优化</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v2.2.0</div>
+        <div class="timeline-date">2026-05-23</div>
+        <div class="timeline-title">数据库迁移 + Web 平台支持（重大更新）</div>
+        <div class="timeline-desc">从 Isar 迁移到 Hive 数据库以提升跨平台兼容性。新增 Web 平台完整支持：Web 设备 ID 生成、IO/Web 适配层、Repository 工厂模式。移除 dart:io 依赖以兼容 Web。</div>
+        <div class="timeline-tags"><span class="timeline-tag refactor">Isar → Hive</span><span class="timeline-tag new">Web 平台</span><span class="timeline-tag refactor">IO/Web 双适配</span></div>
+      </div>
+      <div class="timeline-item fade-in">
+        <div class="timeline-dot"></div>
+        <div class="timeline-version">v2.2.1</div>
+        <div class="timeline-date">2026-05-25</div>
+        <div class="timeline-title">统一日志系统 + 全局优化</div>
+        <div class="timeline-desc">合并远程仓库更新。新增多平台日志系统（app_logger, logger_io, logger_web）。全面优化视频推荐、PDF 查看器、手写识别、裁剪页面、AI 服务等模块。</div>
+        <div class="timeline-tags"><span class="timeline-tag new">日志系统</span><span class="timeline-tag perf">全面优化</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 6: 测试数据 ====== -->
+<section class="section" id="testing">
+  <div class="section-bg-glow"></div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="header-glow"></div><div class="header-glow"></div><div class="header-glow"></div>
+      <div class="section-label">Test Data & Metrics</div>
+      <h2>测试数据与性能指标</h2>
+      <p>基于实际使用测试的关键性能数据</p>
+    </div>
+
+    <div class="test-grid">
+      <div class="test-card fade-in">
+        <div class="test-value">97</div>
+        <div class="test-label">动态可视化评分</div>
+        <div class="test-desc">vs 传统搜题软件 32 分</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">94</div>
+        <div class="test-label">解题逻辑深度</div>
+        <div class="test-desc">vs 传统搜题软件 48 分</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">91</div>
+        <div class="test-label">OCR 识别速度</div>
+        <div class="test-desc">毫秒级图片预处理 + AI 识别</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">60fps</div>
+        <div class="test-label">可视化引擎帧率</div>
+        <div class="test-desc">纯 Dart Canvas 原生渲染</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">96</div>
+        <div class="test-label">即时答疑能力</div>
+        <div class="test-desc">vs 在线教育 52 / 通用大模型 85</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">92</div>
+        <div class="test-label">数学符号严谨性</div>
+        <div class="test-desc">vs 通用大模型 72</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">3</div>
+        <div class="test-label">AI 模型协作数量</div>
+        <div class="test-desc">DeepSeek + 火山引擎 + Qwen</div>
+      </div>
+      <div class="test-card fade-in">
+        <div class="test-value">6+</div>
+        <div class="test-label">数学工具集成</div>
+        <div class="test-desc">GeoGebra 全套离线工具</div>
+      </div>
+    </div>
+
+    <!-- Competitive metrics -->
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:3rem;margin-bottom:1rem;text-align:center;">竞品对比关键指标</h3>
+    <table class="lib-table fade-in">
+      <thead>
+        <tr><th>对比维度</th><th>MathMate</th><th>传统搜题</th><th>在线教育</th><th>通用大模型</th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="color:var(--text);font-weight:500;">即时答疑</td><td style="color:#00CEC9;font-weight:600;">96</td><td>72</td><td>52</td><td>85</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">数学可视化</td><td style="color:#00CEC9;font-weight:600;">97</td><td>35</td><td>58</td><td>20</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">个性化学习</td><td style="color:#00CEC9;font-weight:600;">88</td><td>60</td><td>76</td><td>55</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">成本性价比</td><td style="color:#00CEC9;font-weight:600;">92</td><td>78</td><td>42</td><td>82</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">解题逻辑深度</td><td style="color:#00CEC9;font-weight:600;">94</td><td>48</td><td>71</td><td>65</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">用户体验</td><td style="color:#00CEC9;font-weight:600;">89</td><td>70</td><td>74</td><td>76</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">动态几何画板</td><td style="color:#00CEC9;font-weight:600;">95</td><td>—</td><td>—</td><td>22</td></tr>
+        <tr><td style="color:var(--text);font-weight:500;">专用可视化引擎</td><td style="color:#00CEC9;font-weight:600;">97</td><td>—</td><td>—</td><td>18</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 7: 开源参考 ====== -->
+<section class="section" id="opensource">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">Open Source References</div>
+      <h2>开源参考与借鉴</h2>
+      <p>学习并参考的优秀开源项目，推动 MathMate 技术演进</p>
+    </div>
+
+    <div class="oss-grid">
+      <a class="oss-card fade-in" href="https://github.com/microsoft/ToRA" target="_blank" rel="noopener">
+        <h4>🔬 ToRA</h4>
+        <div class="oss-source">Microsoft Research</div>
+        <p>工具集成推理（Tool-integrated Reasoning）。GSM8K 84.3%，MATH 51.0%。通过代码执行与外部工具协作增强数学推理。为 MathMate 的未来"工具增强推理"方向提供参考。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://github.com/deepseek-ai/DeepSeek-Math" target="_blank" rel="noopener">
+        <h4>🧮 DeepSeek-Math</h4>
+        <div class="oss-source">DeepSeek AI</div>
+        <p>DeepSeek 数学推理大模型。MATH 基准 51.7%。工具使用 + Chain-of-Thought 推理。直接启发了 MathMate 选择 DeepSeek 作为核心推理引擎的技术决策。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://github.com/Green-Wood/Mather" target="_blank" rel="noopener">
+        <h4>📐 Mather</h4>
+        <div class="oss-source">Community</div>
+        <p>全学科数学 Web 应用。包含知识库、离线求解、LaTeX 编辑器。其知识库架构和 API 设计为 MathMate 的知识图谱规划提供了架构参考。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://github.com/Green-Wood/AutoScaler" target="_blank" rel="noopener">
+        <h4>✍️ AutoScaler</h4>
+        <div class="oss-source">South China University of Technology</div>
+        <p>手写数学表达式识别。基于深度学习，从 BTTR 改进而来。为 MathMate 的手写笔记 OCR 识别模块提供了算法参考。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://github.com/rossning92/awesome-math" target="_blank" rel="noopener">
+        <h4>📚 awesome-math</h4>
+        <div class="oss-source">Community</div>
+        <p>精选数学学习资源合集，覆盖数学所有分支。为 MathMate 的分级视频推荐和知识点体系提供了内容结构参考。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://www.geogebra.org/" target="_blank" rel="noopener">
+        <h4>📐 GeoGebra</h4>
+        <div class="oss-source">Open Source (GPL)</div>
+        <p>开源动态数学软件。MathMate 将其 Web3D 版本离线嵌入 WebView，提供科学计算器、几何画板、函数绘图、3D 视图、尺规作图、概率模型六大数学工具。</p>
+      </a>
+      <a class="oss-card fade-in" href="https://github.com/ChatGPTNextWeb/NextChat" target="_blank" rel="noopener">
+        <h4>💬 NextChat (ChatGPT-Next-Web)</h4>
+        <div class="oss-source">ChatGPTNextWeb · MIT License</div>
+        <p>一键部署的私人 AI 对话 Web 应用，支持 GPT-4 / Claude / Gemini 等 15+ 模型提供商。MathMate 借鉴了其流式对话 UI 设计、Markdown + LaTeX 渲染方案和多模型切换机制，应用于蓝心 AI 助手模块。</p>
+      </a>
+    </div>
+
+    <!-- Planned integrations -->
+    <h3 class="fade-in" style="font-size:1.05rem;margin-top:3rem;margin-bottom:0.8rem;text-align:center;">计划集成的新技术</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1rem;">
+      <div class="fade-in" style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+        <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">flutter_tex</h4>
+        <div style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">优先级：最高</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);">完全离线的 LaTeX 渲染（MathJax），Math2SVG 纯 Flutter 渲染无需 WebView。计划替代 flutter_math_fork。</p>
+      </div>
+      <div class="fade-in" style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+        <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">flutter_onnxruntime</h4>
+        <div style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">优先级：高</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);">本地 AI 模型推理，支持 GPU 加速（CUDA/TensorRT/CoreML/NNAPI）。为离线 OCR 和推理铺路。</p>
+      </div>
+      <div class="fade-in" style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+        <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">Cristalyse</h4>
+        <div style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">优先级：最高</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);">Grammar of Graphics API，60fps 原生 Flutter 动画图表。计划补充/替代 GeoGebra 用于 2D 可视化。</p>
+      </div>
+      <div class="fade-in" style="padding:1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);">
+        <h4 style="font-size:0.95rem;margin-bottom:0.3rem;">three_d_graph</h4>
+        <div style="font-size:0.75rem;color:var(--accent);margin-bottom:0.5rem;">优先级：中</div>
+        <p style="font-size:0.82rem;color:var(--text-secondary);">3D 数学图形渲染（XYZ 坐标系），数学函数定义形状。用于 3D 几何可视化增强。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ====== Section 8: 视频与链接 ====== -->
+<section class="section" id="links">
+  <div class="section-bg-glow"></div>
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">Video & Links</div>
+      <h2>演示视频与相关链接</h2>
+      <p>观看产品演示、访问在线服务、获取源代码</p>
+    </div>
+
+    <!-- Video Embed -->
+    <div class="video-container fade-in">
+      <div class="video-embed">
+        <iframe src="https://player.bilibili.com/player.html?bvid=BV1EfLJ6bEnw&high_quality=1" scrolling="no" allowfullscreen="true"></iframe>
+      </div>
+      <div class="video-info">
+        <h3>MathMate 产品演示视频</h3>
+        <p>完整展示 MathMate 的核心功能：拍照搜题、AI 分步解题、交互式几何可视化、蓝心 AI 助手、数学工具箱、手写笔记等。Bilibili: BV1EfLJ6bEnw</p>
+      </div>
+    </div>
+
+    <!-- Link Cards -->
+    <div class="link-grid">
+      <a class="link-card fade-in" href="https://mathmate.top" target="_blank" rel="noopener">
+        <span class="link-icon">🌐</span>
+        <h3>MathMate 官网</h3>
+        <p>产品官方网站，了解 MathMate 的完整功能介绍</p>
+        <div class="link-url">mathmate.top</div>
+      </a>
+      <a class="link-card fade-in" href="https://www.bilibili.com/video/BV1EfLJ6bEnw" target="_blank" rel="noopener">
+        <span class="link-icon">🎬</span>
+        <h3>Bilibili 演示视频</h3>
+        <p>在 B 站观看 MathMate 完整产品功能演示</p>
+        <div class="link-url">bilibili.com/video/BV1EfLJ6bEnw</div>
+      </a>
+      <a class="link-card fade-in" href="https://github.com/mzk-C4/mathmate" target="_blank" rel="noopener">
+        <span class="link-icon">💻</span>
+        <h3>GitHub 源代码</h3>
+        <p>完整的 Flutter 项目源码，MIT 开源协议</p>
+        <div class="link-url">github.com/mzk-C4/mathmate</div>
+      </a>
+      <a class="link-card fade-in" href="https://appetize.io/app/b_o5f6taion7xrqejkb4metjme7e" target="_blank" rel="noopener">
+        <span class="link-icon">📱</span>
+        <h3>在线体验</h3>
+        <p>在浏览器中直接体验 MathMate 应用（Appetize）</p>
+        <div class="link-url">appetize.io</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>MathMate v2.2.0 &mdash; MIT License &mdash; 一款以 AI 大模型为核心驱动的智能数学学习应用</p>
+  <p style="margin-top:0.4rem;">团队：AK全队 &middot; <a href="https://github.com/mzk-C4/mathmate">GitHub</a> &middot; <a href="https://mathmate.top">mathmate.top</a> &middot; <a href="https://www.bilibili.com/video/BV1EfLJ6bEnw">Bilibili</a></p>
+  <p style="margin-top:0.6rem;"><a href="index.html">返回首页</a></p>
+</footer>
+
+<script>
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Reading progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('readingProgress').style.width = pct + '%';
+});
+
+// Cursor glow trail
+(function(){
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+  document.addEventListener('mouseleave', () => {
+    glow.style.left = '-400px';
+    glow.style.top = '-400px';
+  });
+})();
+
+// Floating math symbols
+(function(){
+  const container = document.getElementById('floatingSymbols');
+  const symbols = ['∫','Σ','π','∂','√','∞','Δ','θ','λ','α','β','±','≈','≠','∝','∮','∇','ε','φ','ω','∈','⊂','∪'];
+  function spawn(){
+    const s = document.createElement('div');
+    s.className = 'float-sym';
+    s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (12+Math.random()*16)+'px';
+    s.style.animationDuration = (15+Math.random()*20)+'s';
+    s.style.animationDelay = Math.random()*3+'s';
+    s.style.color = Math.random()>0.5 ? 'rgba(108,92,231,0.06)' : 'rgba(0,206,201,0.05)';
+    container.appendChild(s);
+    setTimeout(()=>s.remove(), 40000);
+  }
+  for(let i=0;i<6;i++) setTimeout(spawn, i*2000);
+  setInterval(spawn, 4000);
+})();
+
+// Fade-in animation with stagger
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const siblings = entry.target.parentElement.querySelectorAll('.fade-in');
+      const idx = Array.from(siblings).indexOf(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Animated counters for test values
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = el.getAttribute('data-target');
+      if (!target) return;
+      const suffix = target.replace(/[\d.]/g, '');
+      const num = parseFloat(target);
+      const isFloat = target.includes('.');
+      let start = 0;
+      const duration = 1200;
+      const startTime = performance.now();
+      function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = num * eased;
+        el.textContent = (isFloat ? current.toFixed(0) : Math.floor(current)) + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.test-value').forEach(el => {
+  el.setAttribute('data-target', el.textContent);
+  el.textContent = '0';
+  counterObserver.observe(el);
+});
+</script>
+
+</body>
+</html>
