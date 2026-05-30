@@ -535,7 +535,20 @@
     .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-    /* ===== Lightbox ===== */
+    /* ===== Video Cover Hover ===== */
+#videoPlayerWrap:hover #playBtn {
+  transform: scale(1.12);
+  box-shadow: 0 8px 40px rgba(108,92,231,0.7);
+  background: rgba(108,92,231,1);
+}
+#videoPlayerWrap:hover #videoCover {
+  transform: scale(1.03);
+}
+#videoPlayerWrap:hover #playOverlay {
+  background: rgba(15,15,26,0.2);
+}
+
+/* ===== Lightbox ===== */
     .lightbox {
       display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.9);
       align-items: center; justify-content: center; cursor: pointer;
@@ -629,11 +642,18 @@
         下载 APK
       </a>
     </div>
-    <div style="margin-top:2.5rem;margin-bottom:1rem;max-width:680px;margin-left:auto;margin-right:auto;" class="fade-in">
-      <div style="position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:0 12px 48px rgba(108,92,231,0.25);">
-        <iframe src="https://player.bilibili.com/player.html?bvid=BV1EfLJ6bEnw&high_quality=1&autoplay=0" scrolling="no" allowfullscreen="true" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"></iframe>
+    <div style="margin-top:2.5rem;margin-bottom:1rem;max-width:720px;margin-left:auto;margin-right:auto;" class="fade-in">
+      <div id="videoPlayerWrap" style="position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:0 12px 48px rgba(108,92,231,0.25);cursor:pointer;background:#000;" onclick="loadBilibiliPlayer()">
+        <img id="videoCover" src="https://i0.hdslb.com/bfs/archive/49eb4dff8a93e43cc34e058f661bd138fe00e5f1.jpg" alt="MathMate 演示视频封面" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s;">
+        <div id="playOverlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,15,26,0.35);transition:background 0.3s;">
+          <div id="playBtn" style="width:72px;height:72px;border-radius:50%;background:rgba(108,92,231,0.85);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 30px rgba(108,92,231,0.5);transition:all 0.3s;backdrop-filter:blur(8px);">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8 5 20 12 8 19"/></svg>
+          </div>
+          <span style="margin-top:1rem;font-size:0.88rem;color:rgba(255,255,255,0.9);font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,0.5);">点击播放演示视频</span>
+          <span style="margin-top:0.3rem;font-size:0.75rem;color:rgba(255,255,255,0.6);">3:00 · MathMate 产品演示</span>
+        </div>
       </div>
-      <p style="text-align:center;font-size:0.82rem;color:var(--text-secondary);margin-top:0.6rem;opacity:0.7;">MathMate 产品演示视频</p>
+      <p style="text-align:center;font-size:0.82rem;color:var(--text-secondary);margin-top:0.6rem;opacity:0.7;">MathMate 产品演示视频 · 点击播放</p>
     </div>
     <div style="margin-top:2rem;margin-bottom:0.5rem;" class="fade-in">
       <img src="images/poster.png" alt="MathMate 产品海报" style="max-width:420px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:0 8px 40px rgba(108,92,231,0.2);">
@@ -1616,6 +1636,30 @@ if(document.getElementById('chart-bar')){
 })();
 
 // ===== Click ripple effect =====
+// Lazy-load Bilibili player
+function loadBilibiliPlayer() {
+  const wrap = document.getElementById('videoPlayerWrap');
+  const cover = document.getElementById('videoCover');
+  const overlay = document.getElementById('playOverlay');
+  // Fade out overlay
+  overlay.style.opacity = '0';
+  overlay.style.transition = 'opacity 0.4s';
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    cover.style.display = 'none';
+    // Create iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1EfLJ6bEnw&high_quality=1&autoplay=1';
+    iframe.scrolling = 'no';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+    iframe.allow = 'autoplay; fullscreen';
+    wrap.appendChild(iframe);
+    wrap.style.cursor = 'default';
+    wrap.onclick = null;
+  }, 400);
+}
+
 document.addEventListener('click', function(e){
   const r = document.createElement('div');
   r.className = 'ripple';
