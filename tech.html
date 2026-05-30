@@ -362,25 +362,77 @@
     .link-card p { color: var(--text-secondary); font-size: 0.82rem; }
     .link-url { font-size: 0.78rem; color: var(--accent); margin-top: 0.5rem; font-family: monospace; }
 
-    /* ===== Comparison Cards ===== */
+    /* ===== AI Model Cards ===== */
     .compare-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem; margin-top: 2rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.8rem; margin-top: 2rem;
     }
     .compare-card {
-      padding: 2rem; background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius); transition: all 0.3s;
+      padding: 0; background: rgba(26,26,46,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(108,92,231,0.15);
+      border-radius: var(--radius); transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      overflow: hidden; position: relative;
     }
-    .compare-card:hover { border-color: rgba(108,92,231,0.4); }
-    .compare-card h4 { font-size: 1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
-    .compare-card ul { list-style: none; padding: 0; }
-    .compare-card li {
-      padding: 0.4rem 0; color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6;
-      border-bottom: 1px solid rgba(108,92,231,0.1); display: flex; gap: 0.5rem;
+    .compare-card:hover {
+      border-color: rgba(108,92,231,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(108,92,231,0.12);
     }
-    .compare-card li:last-child { border-bottom: none; }
-    .compare-card li::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); margin-top: 0.5rem; }
-    .compare-card.accent li::before { background: var(--accent); }
+    .compare-card .card-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid rgba(108,92,231,0.1);
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .compare-card .card-header .icon-wrap {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .compare-card:nth-child(1) .icon-wrap { background: rgba(108,92,231,0.15); }
+    .compare-card:nth-child(2) .icon-wrap { background: rgba(0,206,201,0.15); }
+    .compare-card:nth-child(3) .icon-wrap { background: rgba(253,203,110,0.15); }
+    .compare-card .card-header .title-group h4 {
+      font-size: 1rem; font-weight: 700; margin: 0;
+      background: linear-gradient(135deg, #E8E8F0, #A29BFE);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .compare-card .card-header .title-group .subtitle {
+      font-size: 0.75rem; color: var(--accent); font-weight: 600; margin-top: 0.15rem;
+    }
+    .compare-card .card-body {
+      padding: 1.2rem 1.5rem 1.5rem;
+    }
+    .compare-card .field {
+      margin-bottom: 0.9rem;
+    }
+    .compare-card .field:last-child { margin-bottom: 0; }
+    .compare-card .field-label {
+      font-size: 0.72rem; font-weight: 700; color: var(--primary-light);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem;
+    }
+    .compare-card .field-value {
+      font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65;
+    }
+    .compare-card .field-value code {
+      font-family: var(--font-mono); font-size: 0.78em;
+      background: rgba(108,92,231,0.1); padding: 0.15rem 0.4rem;
+      border-radius: 4px; color: var(--accent);
+    }
+    .compare-card .tag-row {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem;
+    }
+    .compare-card .tag {
+      padding: 0.2rem 0.55rem; background: rgba(108,92,231,0.1);
+      border: 1px solid rgba(108,92,231,0.15); border-radius: 6px;
+      font-size: 0.72rem; color: var(--primary-light);
+    }
+    .compare-card:nth-child(2) .tag {
+      background: rgba(0,206,201,0.08); border-color: rgba(0,206,201,0.15); color: var(--accent);
+    }
+    .compare-card:nth-child(3) .tag {
+      background: rgba(253,203,110,0.08); border-color: rgba(253,203,110,0.15); color: #FDCB6E;
+    }
 
     /* ===== Divider ===== */
     .section-divider {
@@ -1032,34 +1084,111 @@
 
     <div class="compare-grid">
       <div class="compare-card fade-in">
-        <h4>🧠 DeepSeek — 核心推理引擎</h4>
-        <ul>
-          <li><strong>任务：</strong>数学解题 + 几何可视化 JSON 生成 + OCR 识别</li>
-          <li><strong>模型：</strong>deepseek-v4-flash (DeepSeek-V4) · 可切换 deepseek-chat</li>
-          <li><strong>选型依据：</strong>数学推理能力在开源模型中领先；MATH 基准 51.7%；API 成本极低（~0.02元/千token）；中文理解能力强</li>
-          <li><strong>调用方式：</strong>同步 HTTP 请求，超时 60 秒</li>
-          <li><strong>被使用于：</strong>DeepSeekService（OcrService、SolverService、VisualizationService 共用）</li>
-        </ul>
-      </div>
-      <div class="compare-card accent fade-in">
-        <h4>👁️ 火山引擎（豆包）— 多模态 AI</h4>
-        <ul>
-          <li><strong>任务：</strong>拍照 OCR 识别 + 手写识别 + 公式分析 + 数学识别</li>
-          <li><strong>模型：</strong>doubao-seed-2-0-pro-260215（通用推理）· doubao-seed-1-8-251228（OCR 专用，通过 <code>VOLC_OCR_MODEL_ID</code> 独立配置）</li>
-          <li><strong>选型依据：</strong>中文数学公式识别准确率高；支持手写体识别；多模态理解能力强（图片→结构化文本）；豆包系列模型中文语境深度优化</li>
-          <li><strong>调用方式：</strong>HTTP API，图片 Base64 编码上传；OCR 任务通过 <code>VOLC_OCR_MODEL_ID</code> 环境变量独立配置轻量模型，实现推理/OCR 按需分流</li>
-          <li><strong>被使用于：</strong>VolcAiClientService、HandwritingOcrService、FormulaAnalysisService、MathRecognizer</li>
-        </ul>
+        <div class="card-header">
+          <div class="icon-wrap">🧠</div>
+          <div class="title-group">
+            <h4>DeepSeek</h4>
+            <div class="subtitle">核心推理引擎</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-label">模型</div>
+            <div class="field-value"><code>deepseek-v4-flash</code> (DeepSeek-V4) · 可切换 <code>deepseek-chat</code></div>
+          </div>
+          <div class="field">
+            <div class="field-label">核心任务</div>
+            <div class="field-value">数学解题 + 几何可视化 JSON 生成 + OCR 识别</div>
+          </div>
+          <div class="field">
+            <div class="field-label">选型依据</div>
+            <div class="field-value">数学推理能力在开源模型中领先；MATH 基准 51.7%；API 成本极低（~0.02元/千token）；中文理解能力强</div>
+          </div>
+          <div class="field">
+            <div class="field-label">调用方式</div>
+            <div class="field-value">同步 HTTP 请求，超时 60 秒</div>
+          </div>
+          <div class="field">
+            <div class="field-label">服务模块</div>
+            <div class="tag-row">
+              <span class="tag">OcrService</span>
+              <span class="tag">SolverService</span>
+              <span class="tag">VisualizationService</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="compare-card fade-in">
-        <h4>💬 Qwen（通义千问）— 流式对话 + 推荐引擎</h4>
-        <ul>
-          <li><strong>任务：</strong>AI 数学辅导对话 + 视频推荐 + 搜题历史标题生成</li>
-          <li><strong>模型：</strong>qwen3.6-flash-2026-04-16（默认）· 可切换 qwen-plus / qwen-turbo / qwen-max</li>
-          <li><strong>选型依据：</strong>低延迟流式输出（SSE）；OpenAI 兼容 API 接口；中文对话自然流畅；通过阿里云 DashScope 调用，稳定性高</li>
-          <li><strong>调用方式：</strong>Server-Sent Events (SSE) 流式响应</li>
-          <li><strong>被使用于：</strong>ChatStreamService、VivoChatService、VideoRecommendationService、HistoryRepository</li>
-        </ul>
+        <div class="card-header">
+          <div class="icon-wrap">👁️</div>
+          <div class="title-group">
+            <h4>火山引擎（豆包）</h4>
+            <div class="subtitle">多模态 AI</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-label">模型</div>
+            <div class="field-value"><code>doubao-seed-2-0-pro-260215</code>（通用推理）<br><code>doubao-seed-1-8-251228</code>（OCR 专用，通过 <code>VOLC_OCR_MODEL_ID</code> 独立配置）</div>
+          </div>
+          <div class="field">
+            <div class="field-label">核心任务</div>
+            <div class="field-value">拍照 OCR 识别 + 手写识别 + 公式分析 + 数学识别</div>
+          </div>
+          <div class="field">
+            <div class="field-label">选型依据</div>
+            <div class="field-value">中文数学公式识别准确率高；支持手写体识别；多模态理解能力强（图片→结构化文本）；豆包系列模型中文语境深度优化</div>
+          </div>
+          <div class="field">
+            <div class="field-label">调用方式</div>
+            <div class="field-value">HTTP API，图片 Base64 编码上传；OCR 任务独立配置轻量模型，实现推理/OCR 按需分流</div>
+          </div>
+          <div class="field">
+            <div class="field-label">服务模块</div>
+            <div class="tag-row">
+              <span class="tag">VolcAiClientService</span>
+              <span class="tag">HandwritingOcrService</span>
+              <span class="tag">FormulaAnalysisService</span>
+              <span class="tag">MathRecognizer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-card fade-in">
+        <div class="card-header">
+          <div class="icon-wrap">💬</div>
+          <div class="title-group">
+            <h4>Qwen（通义千问）</h4>
+            <div class="subtitle">流式对话 + 推荐引擎</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-label">模型</div>
+            <div class="field-value"><code>qwen3.6-flash-2026-04-16</code>（默认）· 可切换 <code>qwen-plus</code> / <code>qwen-turbo</code> / <code>qwen-max</code></div>
+          </div>
+          <div class="field">
+            <div class="field-label">核心任务</div>
+            <div class="field-value">AI 数学辅导对话 + 视频推荐 + 搜题历史标题生成</div>
+          </div>
+          <div class="field">
+            <div class="field-label">选型依据</div>
+            <div class="field-value">低延迟流式输出（SSE）；OpenAI 兼容 API 接口；中文对话自然流畅；通过阿里云 DashScope 调用，稳定性高</div>
+          </div>
+          <div class="field">
+            <div class="field-label">调用方式</div>
+            <div class="field-value">Server-Sent Events (SSE) 流式响应</div>
+          </div>
+          <div class="field">
+            <div class="field-label">服务模块</div>
+            <div class="tag-row">
+              <span class="tag">ChatStreamService</span>
+              <span class="tag">VivoChatService</span>
+              <span class="tag">VideoRecommendationService</span>
+              <span class="tag">HistoryRepository</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
