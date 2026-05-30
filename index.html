@@ -74,7 +74,11 @@
       display: inline-block; font-size: 0.78rem; font-weight: 600; color: var(--accent);
       text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;
     }
-    .section-header h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 700; margin-bottom: 0.8rem; }
+    .section-header h2 {
+      font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 700; margin-bottom: 0.8rem;
+      background: linear-gradient(135deg, #E8E8F0 0%, #A29BFE 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
     .section-header p { color: var(--text-secondary); max-width: 620px; margin: 0 auto; font-size: 0.95rem; }
 
     /* ===== Hero ===== */
@@ -91,9 +95,11 @@
     @keyframes heroFloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-2%,-2%)} }
     .hero-content { position: relative; z-index: 1; max-width: 800px; }
     .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 1rem;
-      background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.3);
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
+      background: rgba(108,92,231,0.12); border: 1px solid rgba(108,92,231,0.35);
       border-radius: 50px; font-size: 0.85rem; color: var(--primary-light); margin-bottom: 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(108,92,231,0.1);
     }
     .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -144,7 +150,9 @@
       gap: 1.2rem; margin-top: 2rem;
     }
     .pain-card {
-      padding: 1.8rem; background: var(--bg-card); border: 1px solid var(--border);
+      padding: 1.8rem; background: rgba(26,26,46,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
       border-radius: var(--radius); transition: all 0.4s; position: relative; overflow: hidden;
     }
     .pain-card::before {
@@ -206,8 +214,14 @@
 
     /* ===== Feature Showcase ===== */
     .feature-showcase {
-      margin-top: 2rem; padding: 2rem; background: var(--bg-card);
-      border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 2rem;
+      margin-top: 2rem; padding: 2rem; background: rgba(26,26,46,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(108,92,231,0.18); border-radius: var(--radius); margin-bottom: 2rem;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
+    .feature-showcase:hover {
+      border-color: rgba(108,92,231,0.4);
+      box-shadow: 0 8px 40px rgba(108,92,231,0.08);
     }
     .feature-showcase-header {
       display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
@@ -264,7 +278,9 @@
       gap: 1.2rem; margin-top: 2rem;
     }
     .ai-card {
-      padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border);
+      padding: 1.5rem; background: rgba(26,26,46,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
       border-radius: var(--radius); text-align: center; transition: all 0.3s;
     }
     .ai-card:hover { transform: translateY(-3px); border-color: var(--primary); }
@@ -291,7 +307,9 @@
       gap: 1.2rem; margin-top: 2rem;
     }
     .phase-card {
-      padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border);
+      padding: 1.5rem; background: rgba(26,26,46,0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
       border-radius: var(--radius); position: relative; overflow: hidden; transition: all 0.3s;
     }
     .phase-card:hover { border-color: rgba(108,92,231,0.4); }
@@ -333,7 +351,9 @@
     /* ===== Market ===== */
     .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1.2rem; margin-top: 2rem; }
     .market-card {
-      padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border);
+      padding: 1.5rem; background: rgba(26,26,46,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
       border-radius: var(--radius); text-align: center; transition: all 0.3s;
     }
     .market-card:hover { transform: translateY(-3px); border-color: var(--primary); }
@@ -348,7 +368,9 @@
     }
     .tech-item {
       display: flex; align-items: center; gap: 0.8rem; padding: 1rem 1.2rem;
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; transition: all 0.3s;
+      background: rgba(26,26,46,0.5);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border); border-radius: 12px; transition: all 0.3s;
     }
     .tech-item:hover { border-color: var(--primary); transform: translateY(-2px); }
     .tech-icon {
@@ -399,8 +421,10 @@
 
     /* ===== CTA ===== */
     .cta-card {
-      max-width: 700px; margin: 0 auto; padding: 3.5rem 2.5rem; background: var(--bg-card);
-      border: 1px solid var(--border); border-radius: 24px; position: relative; overflow: hidden; text-align: center;
+      max-width: 700px; margin: 0 auto; padding: 3.5rem 2.5rem;
+      background: rgba(26,26,46,0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(108,92,231,0.2); border-radius: 24px; position: relative; overflow: hidden; text-align: center;
     }
     .cta-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradient-1); }
     .cta-card h2 { font-size: 1.8rem; margin-bottom: 0.8rem; }
@@ -534,10 +558,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
         查看源码
       </a>
-      <a href="https://appetize.io/app/b_o5f6taion7xrqejkb4metjme7e" class="btn-secondary" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
-        在线体验
-      </a>
+
       <a href="https://pan.baidu.com/s/1aAbJhw9xCIevHPjnrJW-8w?pwd=emu9" class="btn-secondary" target="_blank">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         下载 APK
@@ -546,9 +567,9 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         演示视频
       </a>
-      <a href="https://mathmate.top" class="btn-secondary" target="_blank">
+      <a href="https://mathmate.top" class="btn-primary" target="_blank" style="background:linear-gradient(135deg, #00CEC9 0%, #6C5CE7 100%);">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        官网
+        官网 mathmate.top
       </a>
     </div>
     <div style="margin-top:2rem;margin-bottom:1rem;" class="fade-in">
@@ -696,10 +717,73 @@
           <p>自研 Flutter 原生渲染引擎，AI 驱动动态图形</p>
         </div>
       </div>
-      <div class="feature-img-row">
-        <img src="images/viz1.png" alt="几何可视化-1" onclick="openLightbox(this)">
-        <img src="images/viz2.png" alt="几何可视化-2" onclick="openLightbox(this)">
-        <img src="images/viz3.png" alt="几何可视化-3" onclick="openLightbox(this)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-bottom:1.2rem;">
+        <!-- Animated Geometry Canvas Demo -->
+        <div style="background:#12122a;border:1px solid rgba(108,92,231,0.25);border-radius:12px;padding:1.2rem;position:relative;overflow:hidden;min-height:260px;">
+          <div style="font-size:0.72rem;color:var(--accent);margin-bottom:0.6rem;font-weight:600;letter-spacing:0.05em;">GEOMETRY PAINTER · LIVE</div>
+          <svg viewBox="0 0 300 220" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid -->
+            <defs>
+              <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(108,92,231,0.1)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="300" height="220" fill="url(#grid)"/>
+            <!-- Axes -->
+            <line x1="40" y1="180" x2="270" y2="180" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
+            <line x1="40" y1="180" x2="40" y2="20" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
+            <text x="270" y="195" fill="rgba(224,224,240,0.4)" font-size="9">x</text>
+            <text x="30" y="22" fill="rgba(224,224,240,0.4)" font-size="9">y</text>
+            <!-- Parabola -->
+            <path d="M 55,175 Q 105,110 155,40 Q 205,110 255,175" fill="none" stroke="#6C5CE7" stroke-width="2" stroke-linecap="round">
+              <animate attributeName="stroke-dasharray" values="0,400;400,0" dur="2s" fill="freeze"/>
+            </path>
+            <!-- Circle -->
+            <circle cx="155" cy="110" r="55" fill="none" stroke="#00CEC9" stroke-width="1.8" stroke-dasharray="4,3">
+              <animate attributeName="r" values="50;58;50" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <!-- Tangent line -->
+            <line x1="80" y1="60" x2="230" y2="160" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="6,3">
+              <animate attributeName="stroke-dashoffset" values="0;18" dur="1.5s" repeatCount="indefinite"/>
+            </line>
+            <!-- Moving point on parabola -->
+            <circle r="4" fill="#FDCB6E">
+              <animateMotion dur="3s" repeatCount="indefinite" path="M 55,175 Q 105,110 155,40 Q 205,110 255,175"/>
+            </circle>
+            <!-- Static points with labels -->
+            <circle cx="155" cy="40" r="3.5" fill="#6C5CE7"/>
+            <text x="162" y="38" fill="#A29BFE" font-size="9" font-weight="600">A</text>
+            <circle cx="100" cy="134" r="3.5" fill="#00CEC9"/>
+            <text x="87" y="132" fill="#81ECEC" font-size="9" font-weight="600">B</text>
+            <circle cx="210" cy="134" r="3.5" fill="#00CEC9"/>
+            <text x="216" y="132" fill="#81ECEC" font-size="9" font-weight="600">C</text>
+            <!-- Intersection point -->
+            <circle cx="155" cy="110" r="3" fill="#FF6B6B"/>
+            <text x="162" y="108" fill="#FF6B6B" font-size="8">P(x,y)</text>
+            <!-- Labels -->
+            <text x="180" y="52" fill="rgba(108,92,231,0.7)" font-size="8" font-style="italic">y = ax² + bx + c</text>
+            <text x="200" y="85" fill="rgba(0,206,201,0.7)" font-size="8" font-style="italic">(x-h)²+(y-k)²=r²</text>
+          </svg>
+        </div>
+        <!-- Feature cards showing capabilities -->
+        <div style="display:flex;flex-direction:column;gap:0.8rem;">
+          <div style="background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(108,92,231,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">📐</div>
+            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">GeometryJSON 协议</div><div style="font-size:0.78rem;color:var(--text-secondary);">AI 输出结构化 JSON → Canvas 实时渲染</div></div>
+          </div>
+          <div style="background:rgba(0,206,201,0.08);border:1px solid rgba(0,206,201,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(0,206,201,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">🎯</div>
+            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">交互式拖拽</div><div style="font-size:0.78rem;color:var(--text-secondary);">动点轨迹动画、滑块调参、手势缩放</div></div>
+          </div>
+          <div style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,107,107,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">⚡</div>
+            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">60fps 原生渲染</div><div style="font-size:0.78rem;color:var(--text-secondary);">纯 Dart Canvas，零 WebView 依赖，自动重试</div></div>
+          </div>
+          <div style="background:rgba(253,203,110,0.08);border:1px solid rgba(253,203,110,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
+            <div style="width:36px;height:36px;border-radius:8px;background:rgba(253,203,110,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">🔄</div>
+            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">丰富图形支持</div><div style="font-size:0.78rem;color:var(--text-secondary);">点、线、圆、椭圆、双曲线、抛物线、动点</div></div>
+          </div>
+        </div>
       </div>
       <p class="feature-desc">核心创新：AI 自动从题目文本中抽取几何参数并生成 JSON，自研 GeometryPainter 引擎（纯 Dart Canvas）实时渲染可交互图形。支持点、线、圆、椭圆、双曲线、抛物线、动点轨迹动画、滑块拖拽。零 WebView 依赖，60fps 原生帧率，解析失败自动重试。</p>
       <div class="feature-highlights">
@@ -930,7 +1014,7 @@
     <div class="section-header fade-in">
       <div class="section-label">Roadmap</div>
       <h2>技术开发路线图</h2>
-      <p>从核心流水线到知识图谱的六阶段演进</p>
+      <p>从核心流水线到知识图谱的系统化演进路径</p>
     </div>
     <div class="roadmap-phases">
       <div class="phase-card done fade-in">
@@ -953,10 +1037,10 @@
         <h3>Phase 4：视频与 PDF</h4>
         <p>AI 视频推荐系统（B 站数学视频 + DeepSeek 语义匹配）、PDF 查看器与标注功能。</p>
       </div>
-      <div class="phase-card active fade-in">
-        <span class="phase-status active">🔄 进行中</span>
+      <div class="phase-card done fade-in">
+        <span class="phase-status done">✅ 已完成</span>
         <h3>Phase 5：跨平台与性能</h3>
-        <p>Web 平台支持（Flutter Web 构建）、Isar → Hive 数据库迁移、跨平台日志系统、性能优化与稳定性提升。</p>
+        <p>Web 平台支持（Flutter Web 构建）、Isar → Hive 数据库迁移完成、跨平台日志系统上线（logger_io / logger_web）、性能优化与稳定性提升。</p>
       </div>
       <div class="phase-card planned fade-in">
         <span class="phase-status planned">📋 规划中</span>
@@ -968,23 +1052,23 @@
     <div class="section-header fade-in" style="margin-top:4rem;">
       <div class="section-label">Future Vision</div>
       <h2>未来技术规划</h2>
-      <p>借鉴 ToRA、Mather、DeepSeek-Math、NextChat 等开源项目的持续演进</p>
+      <p>从知识图谱构建到本地化 AI 的三阶段演进规划</p>
     </div>
     <div class="roadmap-phases">
-      <div class="phase-card planned fade-in">
-        <span class="phase-status planned">短期 1-3月</span>
-        <h3>知识库 + 解题增强</h3>
-        <p>构建高中数学知识库（概念/公式/定理）、分步骤解题展示增强、LaTeX 公式编辑器组件。</p>
+      <div class="phase-card active fade-in">
+        <span class="phase-status active">🔄 进行中</span>
+        <h3>知识图谱与智能错题本</h3>
+        <p>构建个人知识图谱、智能错题本自动归集、知识库系统（概念/公式/定理库）、LaTeX 公式编辑器组件。</p>
       </div>
       <div class="phase-card planned fade-in">
-        <span class="phase-status planned">中期 3-6月</span>
-        <h3>工具集成推理</h3>
-        <p>集成 Wolfram Alpha / Symbolab 外部工具、Python 执行环境、学习路径规划与知识图谱构建。</p>
+        <span class="phase-status planned">中期规划</span>
+        <h3>工具集成推理与学习路径</h3>
+        <p>集成 Wolfram Alpha / Symbolab 外部计算引擎、学习路径智能规划与推荐、多维度知识掌握度分析。</p>
       </div>
       <div class="phase-card planned fade-in">
-        <span class="phase-status planned">长期 6月+</span>
-        <h3>本地化 + 沉浸式</h3>
-        <p>flutter_onnxruntime 本地 AI 模型（离线 OCR/推理）、Cristalyse 语法图形学图表、3D 几何可视化、VR/AR 数学演示。</p>
+        <span class="phase-status planned">远期愿景</span>
+        <h3>本地化 AI + 沉浸式体验</h3>
+        <p>flutter_onnxruntime 本地 AI 模型（离线 OCR/推理）、3D 几何可视化增强、VR/AR 数学空间演示、多语言国际化。</p>
       </div>
     </div>
   </div>
@@ -1314,10 +1398,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           快速开始
         </a>
-        <a href="https://appetize.io/app/b_o5f6taion7xrqejkb4metjme7e" class="btn-secondary" target="_blank">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
-          在线体验
-        </a>
+
         <a href="https://pan.baidu.com/s/1aAbJhw9xCIevHPjnrJW-8w?pwd=emu9" class="btn-secondary" target="_blank">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           下载 APK
