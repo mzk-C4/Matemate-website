@@ -1,0 +1,25 @@
+{
+  "name": "mathmate-website",
+  "version": "1.0.0",
+  "description": "MathMate 官网 + API 代理服务器",
+  "main": "proxy_server.js",
+  "scripts": {
+    "start": "node proxy_server.js",
+    "dev": "node proxy_server.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop mathmate-api",
+    "pm2:restart": "pm2 restart mathmate-api",
+    "pm2:logs": "pm2 logs mathmate-api",
+    "pm2:status": "pm2 status"
+  },
+  "keywords": ["mathmate", "ai", "math", "education", "flutter"],
+  "author": "AK完全队",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
