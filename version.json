@@ -1,0 +1,9 @@
+{
+  "version": "2.4.5",
+  "buildNumber": 2026071304,
+  "apkUrl": "https://mathmate.top/app/mathmate-2.4.5-2026071304.apk",
+  "apkSizeBytes": 123324944,
+  "apkSha256": "9f437a324cc265a27a5a61ce5ad32158d9ee097beba708b20f0a35cc13b1fc63",
+  "forceUpdate": false,
+  "releaseNotes": "MathMate v2.4.5 更新：\n1. 上线 GeoChat 几何引擎，支持几何计划的生成、执行与验证\n2. 我的资料支持长按删除，资料管理更便捷\n3. 选择题多格式解析、填空题数值等价判定与下一题导航\n4. 考试认证流程对齐，修复 LaTeX 渲染闪退与几何稳定性"
+}

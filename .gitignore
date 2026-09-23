@@ -1,0 +1,7 @@
+# Local credentials and dependencies
+.env
+.env.*
+!.env.example
+!.env.template
+node_modules/
+*.log

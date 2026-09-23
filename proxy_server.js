@@ -14,6 +14,8 @@ const express = require('express');
 const http = require('http');
 const https = require('https');
 const url = require('url');
+const crypto = require('crypto');
+const fs = require('fs');
 
 // ============================================
 // 配置
@@ -27,6 +29,10 @@ const CONFIG = {
     VOLC_API_URL: process.env.VOLC_API_URL || 'https://ark.cn-beijing.volces.com/api/v3',
     QWEN_API_KEY: process.env.QWEN_API_KEY || '',
     QWEN_API_URL: process.env.QWEN_API_URL || 'https://dashscope.aliyuncs.com/api/v1',
+    AUTH_SECRET_FILE: process.env.AUTH_SECRET_FILE || '/opt/mathmate/auth_secret.txt',
+    RATE_LIMIT_PER_MINUTE: Math.max(1, parseInt(process.env.RATE_LIMIT_PER_MINUTE || '60', 10) || 60),
+    ALLOWED_ORIGINS: (process.env.ALLOWED_ORIGINS || 'https://mathmate.top,https://www.mathmate.top')
+        .split(',').map(value => value.trim()).filter(Boolean),
 };
 
 // ============================================
@@ -40,15 +46,70 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // CORS 头
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    if (origin && CONFIG.ALLOWED_ORIGINS.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Vary', 'Origin');
+    }
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Request-ID');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-MathMate-Token, X-Request-ID');
     res.header('Access-Control-Expose-Headers', 'X-Request-ID');
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }
     next();
 });
+
+let cachedSecret = null;
+function getAuthSecret() {
+    if (cachedSecret) return cachedSecret;
+    try {
+        cachedSecret = fs.readFileSync(CONFIG.AUTH_SECRET_FILE, 'utf8').trim();
+    } catch (_) {
+        return null;
+    }
+    return cachedSecret || null;
+}
+
+function verifyAuthToken(token) {
+    try {
+        const secret = getAuthSecret();
+        if (!secret || !token) return null;
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const signature = crypto.createHmac('sha256', secret)
+            .update(`${parts[0]}.${parts[1]}`).digest('base64url');
+        const expected = Buffer.from(signature);
+        const actual = Buffer.from(parts[2]);
+        if (expected.length !== actual.length || !crypto.timingSafeEqual(expected, actual)) return null;
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+        if (!payload.uid || !Number.isInteger(payload.exp) || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+        return payload;
+    } catch (_) {
+        return null;
+    }
+}
+
+const requestWindows = new Map();
+function requireAuthenticatedUser(req, res, next) {
+    const bearer = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+    const token = req.headers['x-mathmate-token'] || bearer;
+    const user = verifyAuthToken(token);
+    if (!user) return res.status(401).json({ error: '请先登录或登录已过期' });
+
+    const now = Date.now();
+    const key = `${user.uid}:${req.ip}`;
+    const current = requestWindows.get(key);
+    if (!current || now - current.startedAt >= 60000) {
+        requestWindows.set(key, { startedAt: now, count: 1 });
+    } else if (++current.count > CONFIG.RATE_LIMIT_PER_MINUTE) {
+        return res.status(429).json({ error: '请求过于频繁，请稍后再试' });
+    }
+    req.authUser = user;
+    next();
+}
+
+app.use(['/api/deepseek', '/api/volc', '/api/qwen'], requireAuthenticatedUser);
 
 // 请求日志
 app.use((req, res, next) => {

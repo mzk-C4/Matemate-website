@@ -3,31 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
 
-  <!-- ============================================
-       SEO Meta 标签
-       ============================================ -->
-  <title>MathMate - AI驱动的智能数学学习应用 | 拍照搜题 | 几何可视化 | AI对话助手</title>
-  <meta name="description" content="MathMate 是一款以 AI 大模型为核心驱动的智能数学学习应用，提供拍照搜题、交互式几何可视化、AI 对话助手、GeoGebra 工具箱、智能笔记等功能。支持小学到高中全年级，让数学学习更高效。">
-  <meta name="keywords" content="MathMate,数学学习,AI搜题,拍照解题,几何可视化,GeoGebra,智能教育,数学应用,AI辅导,在线数学">
+  <!-- ===== SEO Meta ===== -->
+  <title>MathMate v2.4.5 - AI 数学学习工作台 | 解题、考试与资源库</title>
+  <meta name="description" content="MathMate v2.4.5 打通大学维度学习画像与 LaTeX 公式渲染全链路，并升级多模型对话、登录注册、GeoChat Agent、自由组卷和数学资源库。">
+  <meta name="keywords" content="MathMate,AI数学,拍照解题,自由组卷,数学考试,几何可视化,Awesome Math,GeoGebra,数学笔记,Flutter">
   <meta name="author" content="AK完全队">
   <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#6C5CE7">
+  <meta name="theme-color" content="#0F0F1A">
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mathmate.top/">
-  <meta property="og:title" content="MathMate - AI驱动的智能数学学习应用">
-  <meta property="og:description" content="拍照搜题、几何可视化、AI对话助手、一站式数学学习体验">
+  <meta property="og:title" content="MathMate v2.4.5 - AI 数学学习工作台">
+  <meta property="og:description" content="大学维度学习画像、全链路公式渲染、开放注册、多模型对话与 GeoChat Agent 协同升级。">
   <meta property="og:image" content="https://mathmate.top/images/poster.png">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:site_name" content="MathMate">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://mathmate.top/">
-  <meta name="twitter:title" content="MathMate - AI驱动的智能数学学习应用">
-  <meta name="twitter:description" content="拍照搜题、几何可视化、AI对话助手、一站式数学学习体验">
+  <meta name="twitter:title" content="MathMate v2.4.5 - AI 数学学习工作台">
+  <meta name="twitter:description" content="解题、大学能力画像、LaTeX 公式、动态几何、组卷考试与多模型对话。">
   <meta name="twitter:image" content="https://mathmate.top/images/poster.png">
 
   <!-- Apple -->
@@ -35,1885 +33,1768 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="MathMate">
 
-  <!-- Canonical URL -->
   <link rel="canonical" href="https://mathmate.top/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/icon.png">
   <link rel="apple-touch-icon" href="/icon.png">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-  <!-- Preconnect -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-  <link rel="dns-prefetch" href="https://player.bilibili.com">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://player.bilibili.com">
+  <link rel="preload" as="image" href="images/video-cover.jpg">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- progressive enhancement: gate reveal animations behind JS so content stays visible without it -->
+  <script>document.documentElement.classList.add('js');</script>
+
   <style>
-    /* ===== Scroll Progress Bar ===== */
+    /* ============================================================
+       Design Tokens
+       ============================================================ */
+    :root {
+      color-scheme: dark;
+
+      /* backgrounds — immersive near-black (cool-web-homepage-design) */
+      --color-bg:          #101010;
+      --color-surface:     #161616;
+      --color-surface-2:   #1A1A1A;
+      --color-surface-hover:#242424;
+      --color-border:      rgba(114, 226, 221, 0.16);
+      --color-border-strong:rgba(0, 206, 201, 0.30);
+
+      /* text — three-tier white */
+      --color-text:        #FFFFFF;
+      --color-text-muted:  rgba(255, 255, 255, 0.75);
+      --color-text-dim:    rgba(255, 255, 255, 0.50);
+
+      /* accent: cyan is the single primary; purple demoted to gradient tails only */
+      --color-primary:     #6C5CE7;
+      --color-primary-soft:#A29BFE;
+      --color-accent:      #00CEC9;
+      --color-accent-soft: #72E2DD;
+      --color-gold:        #F2C14E;
+      --color-danger:      #FF6B6B;
+      --accent-cyan-glow:  rgba(0, 206, 201, 0.30);
+      --progress-fill:     var(--color-accent);
+
+      --gradient-brand:    linear-gradient(135deg, #6C5CE7 0%, #00CEC9 100%);
+      --gradient-text:     linear-gradient(135deg, #FFFFFF 0%, #72E2DD 100%);
+      --gradient-glow:     radial-gradient(ellipse 60% 50% at 30% 40%, rgba(0,206,201,0.10), transparent 60%),
+                           radial-gradient(ellipse 50% 40% at 75% 60%, rgba(108,92,231,0.06), transparent 60%);
+
+      --radius:    16px;
+      --radius-sm: 10px;
+      --radius-pill: 50px;
+      --shadow-card:  0 8px 32px rgba(0, 0, 0, 0.30);
+      --shadow-hover: 0 16px 48px rgba(0, 206, 201, 0.12);
+
+      --space-section: clamp(4rem, 8vw, 6.5rem);
+      --container:     1120px;
+
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+      --font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', Menlo, Consolas, monospace;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* subtle grid backdrop */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(114,226,221,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(114,226,221,0.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, #000 0, transparent 75%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0, transparent 75%);
+    }
+
+    img { max-width: 100%; height: auto; display: block; }
+
+    a { color: inherit; }
+
+    /* ============================================================
+       Focus (a11y)
+       ============================================================ */
+    :focus-visible {
+      outline: 3px solid var(--color-accent-soft);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .skip-link {
+      position: fixed; left: 1rem; top: -120px; z-index: 10000;
+      padding: 0.7rem 1.2rem; border-radius: var(--radius-sm);
+      background: var(--color-gold); color: #061317; font-weight: 700;
+      text-decoration: none; transition: top 0.2s ease-out;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    /* ============================================================
+       Scroll progress
+       ============================================================ */
     .scroll-progress {
       position: fixed; top: 0; left: 0; height: 3px; z-index: 9999;
-      background: var(--gradient-1); width: 0%; transition: width 0.1s linear;
-    }
-    :root {
-      --primary: #6C5CE7;
-      --primary-light: #A29BFE;
-      --primary-dark: #5A4BD1;
-      --accent: #00CEC9;
-      --accent-light: #81ECEC;
-      --gradient-1: linear-gradient(135deg, #6C5CE7 0%, #A29BFE 50%, #00CEC9 100%);
-      --gradient-2: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-3: linear-gradient(135deg, #00CEC9 0%, #6C5CE7 100%);
-      --bg: #0F0F1A;
-      --bg-card: #1A1A2E;
-      --bg-card-hover: #222240;
-      --text: #E8E8F0;
-      --text-secondary: #A0A0C0;
-      --border: rgba(108, 92, 231, 0.2);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      --radius: 16px;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.7; overflow-x: hidden;
+      background: var(--gradient-brand); width: 0%;
+      transition: width 0.1s linear;
     }
 
-    /* ===== Nav ===== */
-    nav {
+    /* ============================================================
+       Navigation
+       ============================================================ */
+    .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center;
-      backdrop-filter: blur(24px) saturate(180%);
-      background: rgba(15,15,26,0.75);
-      border-bottom: 1px solid rgba(108,92,231,0.1); transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      padding: 0.85rem clamp(1rem, 4vw, 2rem);
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(16, 16, 16, 0.72);
+      border-bottom: 1px solid rgba(0, 206, 201, 0.12);
+      transition: padding 0.4s cubic-bezier(0.4,0,0.2,1), background 0.4s;
     }
-    nav.scrolled {
-      padding: 0.5rem 2rem;
-      background: rgba(15,15,26,0.92);
-      border-bottom-color: rgba(108,92,231,0.25);
+    .nav.scrolled {
+      padding-block: 0.55rem;
+      background: rgba(16, 16, 16, 0.92);
+      border-bottom-color: rgba(0, 206, 201, 0.25);
       box-shadow: 0 4px 30px rgba(0,0,0,0.3);
     }
     .nav-logo {
-      display: flex; align-items: center; gap: 0.75rem; font-size: 1.3rem; font-weight: 700;
-      background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
+      display: flex; align-items: center; gap: 0.65rem;
+      font-size: 1.25rem; font-weight: 800; text-decoration: none;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .nav-logo svg { width: 30px; height: 30px; }
-    .nav-links { display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap; }
+    .nav-logo svg { width: 30px; height: 30px; flex-shrink: 0; }
+    .nav-links {
+      display: flex; gap: 1.4rem; list-style: none; flex-wrap: wrap;
+    }
     .nav-links a {
-      color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; transition: color 0.3s; position: relative;
+      color: var(--color-text-muted); text-decoration: none;
+      font-size: 0.88rem; transition: color 0.3s; position: relative;
+      padding-block: 0.3rem;
     }
-    .nav-links a:hover { color: var(--primary-light); }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--color-accent-soft); }
     .nav-links a::after {
-      content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
-      background: var(--gradient-1); transition: width 0.3s; border-radius: 1px;
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 2px; background: var(--gradient-brand);
+      transition: width 0.3s; border-radius: 1px;
     }
-    .nav-links a:hover::after { width: 100%; }
-    .nav-github {
-      display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1rem;
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
-      color: var(--text); text-decoration: none; font-size: 0.85rem; transition: all 0.3s;
-    }
-    .nav-github:hover { border-color: var(--primary); background: var(--bg-card-hover); }
+    .nav-links a:hover::after, .nav-links a:focus-visible::after { width: 100%; }
+    .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
 
-    /* ===== Section Common ===== */
-    .section { padding: 5rem 2rem; position: relative; }
-    .section-bg-glow {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 50% 40% at 20% 50%, rgba(108,92,231,0.04) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 30% at 80% 50%, rgba(0,206,201,0.03) 0%, transparent 60%);
-      pointer-events: none;
+    /* ============================================================
+       Buttons
+       ============================================================ */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 0.5rem; padding: 0.8rem 1.6rem;
+      border-radius: 12px; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+                  box-shadow 0.3s, background 0.3s, border-color 0.3s;
+      min-height: 44px; border: 1px solid transparent;
     }
-    .container { max-width: 1100px; margin: 0 auto; position: relative; }
-    .section-header { text-align: center; margin-bottom: 1rem; }
-    .section-label {
-      display: inline-block; font-size: 0.78rem; font-weight: 700; color: var(--accent);
-      text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.6rem;
-      padding: 0.25rem 0.8rem; background: rgba(0,206,201,0.08);
-      border: 1px solid rgba(0,206,201,0.15); border-radius: 50px;
-    }
-    .section-header h2 {
-      font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 700; margin-bottom: 0.8rem;
-      background: linear-gradient(135deg, #E8E8F0 0%, #A29BFE 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .section-header p { color: var(--text-secondary); max-width: 620px; margin: 0 auto; font-size: 0.95rem; }
-
-    /* ===== Hero ===== */
-    .hero {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
-    }
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 30%, rgba(108,92,231,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 60%, rgba(0,206,201,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 50% 80%, rgba(162,155,254,0.06) 0%, transparent 50%);
-      animation: heroFloat 25s ease-in-out infinite;
-    }
-    .hero::after {
-      content: ''; position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(108,92,231,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(108,92,231,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-    }
-    @keyframes heroFloat {
-      0%,100% { opacity: 1; transform: scale(1); }
-      33% { opacity: 0.9; transform: scale(1.02) translate(-1%, 1%); }
-      66% { opacity: 1; transform: scale(0.99) translate(1%, -1%); }
-    }
-    .hero-content { position: relative; z-index: 1; max-width: 800px; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1.2rem;
-      background: rgba(108,92,231,0.12); border: 1px solid rgba(108,92,231,0.35);
-      border-radius: 50px; font-size: 0.85rem; color: var(--primary-light); margin-bottom: 1.5rem;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 20px rgba(108,92,231,0.1);
-    }
-    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .hero h1 { font-size: clamp(2.5rem,6vw,4.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.2rem; letter-spacing: -0.03em; text-shadow: 0 0 80px rgba(108,92,231,0.15); }
-    .hero h1 .gradient-text { background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .hero p { font-size: 1.15rem; color: var(--text-secondary); max-width: 580px; margin: 0 auto 2rem; line-height: 1.8; }
-    .hero-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-top: 1.5rem; opacity: 0.7; }
-    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
     .btn-primary {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem;
-      background: var(--gradient-2); color: white; border: none; border-radius: 12px;
-      font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-      text-decoration: none; box-shadow: 0 4px 20px rgba(108,92,231,0.4);
-      position: relative; overflow: hidden;
+      background: var(--gradient-brand); color: #fff;
+      box-shadow: 0 4px 20px rgba(108, 92, 231, 0.35);
     }
-    .btn-primary::after {
-      content: ''; position: absolute; top: -50%; left: -60%; width: 40%; height: 200%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transform: skewX(-25deg); transition: left 0.6s;
-    }
-    .btn-primary:hover::after { left: 120%; }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 35px rgba(108,92,231,0.5); }
+    .btn-primary:hover { box-shadow: 0 8px 35px rgba(108, 92, 231, 0.50); }
     .btn-secondary {
-      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.8rem;
-      background: rgba(26,26,46,0.5); color: var(--text); border: 1px solid rgba(108,92,231,0.25);
-      border-radius: 12px; font-size: 0.95rem; font-weight: 500; cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.4,0,0.2,1); text-decoration: none;
-      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.04); color: var(--color-text);
+      border-color: rgba(255,255,255,0.16); backdrop-filter: blur(4px);
     }
     .btn-secondary:hover {
-      border-color: var(--primary);
-      background: rgba(108,92,231,0.15);
-      transform: translateY(-3px);
-      box-shadow: 0 4px 20px rgba(108,92,231,0.15);
+      border-color: var(--color-accent); background: rgba(0,206,201,0.10);
+      box-shadow: 0 4px 20px rgba(0,206,201,0.12);
     }
-    .hero-stats {
-      display: flex; gap: 2.5rem; justify-content: center; margin-top: 3rem;
-      padding-top: 1.5rem; border-top: 1px solid var(--border);
-    }
-    .hero-stat {
-      text-align: center; padding: 0.5rem 1rem;
-      border-radius: 12px; transition: background 0.3s;
-    }
-    .hero-stat:hover { background: rgba(108,92,231,0.08); }
-    .hero-stat .number {
-      font-size: 2rem; font-weight: 800;
-      background: linear-gradient(135deg, #6C5CE7, #00CEC9);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .hero-stat .label { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.2rem; font-weight: 500; }
 
-    /* ===== TOC ===== */
-    .toc-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.2rem; margin-top: 2.5rem;
+    /* ============================================================
+       Layout primitives
+       ============================================================ */
+    main { display: block; }
+    .section {
+      padding: var(--space-section) clamp(1rem, 4vw, 2rem);
+      position: relative;
     }
-    .toc-card {
-      padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius); transition: all 0.3s; text-decoration: none; color: var(--text); display: block;
+    .section--glow::before {
+      content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background: var(--gradient-glow);
     }
-    .toc-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: var(--shadow); }
-    .toc-num { font-size: 0.75rem; font-weight: 700; color: var(--accent); margin-bottom: 0.4rem; }
-    .toc-card h3 { font-size: 1.05rem; margin-bottom: 0.3rem; }
-    .toc-card p { font-size: 0.82rem; color: var(--text-secondary); }
+    .container { max-width: var(--container); margin-inline: auto; position: relative; }
 
-    /* ===== Pain Points ===== */
+    .section-head { text-align: center; max-width: 680px; margin: 0 auto clamp(2rem, 4vw, 3rem); }
+    .section-label {
+      display: inline-block; font-size: 0.76rem; font-weight: 700;
+      color: var(--color-gold); text-transform: uppercase; letter-spacing: 0.16em;
+      padding: 0.28rem 0.9rem; background: rgba(0, 206, 201, 0.08);
+      border: 1px solid rgba(0, 206, 201, 0.18);
+      border-radius: var(--radius-pill); margin-bottom: 0.8rem;
+    }
+    .section-head h2 {
+      font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 800;
+      line-height: 1.2; margin-bottom: 0.7rem; text-wrap: balance;
+      background: var(--gradient-text);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .section-head p { color: var(--color-text-muted); font-size: 0.96rem; text-wrap: pretty; }
+    .section-head .section-en {
+      color: var(--color-text-dim); font-size: 0.92rem; font-style: italic;
+      letter-spacing: 0.02em; margin: -0.2rem 0 0.9rem; text-wrap: balance;
+    }
+    /* full-bleed immersive section (cool-web-homepage-design) */
+    .section--full {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+    }
+
+    /* figure with horizontal scroll on small screens */
+    .figure { margin: 0; }
+    .figure-scroll {
+      overflow-x: auto; border: 1px solid var(--color-border);
+      border-radius: var(--radius); background: #fff;
+      box-shadow: var(--shadow-card);
+      scrollbar-width: thin; scrollbar-color: var(--color-accent) rgba(255,255,255,0.08);
+    }
+    .figure-scroll img { width: 100%; cursor: zoom-in; }
+    .figure figcaption {
+      margin-top: 0.8rem; color: var(--color-text-muted);
+      font-size: 0.82rem; text-align: center;
+    }
+
+    /* ============================================================
+       Hero
+       ============================================================ */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2.4rem;
+      padding: 7rem clamp(1rem, 4vw, 2.5rem) 3.5rem; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 32%, rgba(0,206,201,0.13), transparent 60%),
+        radial-gradient(ellipse 45% 40% at 78% 68%, rgba(108,92,231,0.08), transparent 60%);
+    }
+    .hero::after {
+      content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,206,201,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,206,201,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, #000 30%, transparent 72%);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 72%);
+    }
+    .hero-content {
+      position: relative; z-index: 3; text-align: center;
+      max-width: 880px; margin-inline: auto;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.42rem 1.1rem; background: rgba(0,206,201,0.08);
+      border: 1px solid rgba(0,206,201,0.30); border-radius: var(--radius-pill);
+      font-size: 0.84rem; color: var(--color-accent-soft); margin-bottom: 1.4rem;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--color-gold);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .hero h1 {
+      font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 800;
+      line-height: 1.1; margin-bottom: 1.3rem; text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+    .hero h1 .hero-en {
+      display: block; color: var(--color-text); letter-spacing: -0.02em;
+    }
+    .hero h1 .grad {
+      display: block; margin-top: 0.5rem; font-size: 0.5em; font-weight: 700;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-lead {
+      font-size: 1.04rem; color: var(--color-text-muted);
+      max-width: 680px; margin: 0 auto 1.4rem; line-height: 1.8; text-wrap: pretty;
+    }
+    .keywords {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center;
+      margin-bottom: 1.8rem;
+    }
+    .keywords span {
+      padding: 0.42rem 1rem; font-size: 0.82rem;
+      border-radius: var(--radius-pill); border: 1px solid transparent; background: rgba(255,255,255,0.04);
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .keywords span:nth-child(odd)  { color: var(--color-accent-soft);  border-color: rgba(0,206,201,0.30);  background: rgba(0,206,201,0.06); }
+    .keywords span:nth-child(even) { color: var(--color-primary-soft); border-color: rgba(108,92,231,0.30); background: rgba(108,92,231,0.06); }
+    .keywords span:hover { background: rgba(255,255,255,0.10); }
+    .hero-buttons { display: flex; gap: 0.85rem; flex-wrap: wrap; justify-content: center; }
+    .hero-buttons .btn { flex: 0 1 auto; }
+    .hero-sub {
+      margin-top: 0.4rem; font-size: 0.82rem; color: var(--color-text-dim);
+    }
+
+    /* hero loading progress bar (cool-web-homepage-design) */
+    .progress-bar {
+      position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+      background: rgba(255,255,255,0.08); z-index: 4;
+    }
+    .progress-bar .progress {
+      height: 100%; width: 0; background: var(--gradient-brand);
+      box-shadow: 0 0 12px rgba(108,92,231,0.45);
+      transition: width 3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* product window */
+    .hero-media { position: relative; width: min(880px, 100%); margin-inline: auto; z-index: 3; }
+    .hero-media::before {
+      content: ''; position: absolute; inset: 8% -4% -6% 6%; z-index: -1;
+      background: linear-gradient(135deg, rgba(0,206,201,0.20), rgba(0,206,201,0.08));
+      filter: blur(34px); opacity: 0.85;
+    }
+    .product-window {
+      border: 1px solid rgba(0,206,201,0.28); border-radius: 14px;
+      overflow: hidden; background: rgba(14,14,14,0.92);
+      box-shadow: 0 28px 90px rgba(0,0,0,0.42);
+    }
+    .product-window-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 0.95rem; border-bottom: 1px solid rgba(0,206,201,0.18);
+      color: var(--color-text-muted); font-size: 0.78rem;
+    }
+    .window-dots { display: flex; gap: 0.38rem; }
+    .window-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(232,232,240,0.28); }
+
+    .video-shell {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      overflow: hidden; cursor: pointer; background: #000;
+      border: 0; padding: 0; display: block;
+    }
+    /* lazy-loaded B站 iframe embed (对比视频等非首屏) */
+    .video-embed {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      overflow: hidden; background: #000;
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      box-shadow: var(--shadow-card);
+    }
+    .video-embed iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+    }
+    .video-shell img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .video-overlay {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(15,15,26,0.34); transition: background 0.3s;
+    }
+    .play-btn {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: rgba(0,206,201,0.88);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 30px rgba(0,206,201,0.34);
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    }
+    .video-shell:hover .play-btn { transform: scale(1.1); background: rgba(108,92,231,1); box-shadow: 0 8px 40px rgba(108,92,231,0.7); }
+    .video-shell:hover img { transform: scale(1.03); }
+    .video-shell:hover .video-overlay { background: rgba(15,15,26,0.2); }
+    .play-copy { margin-top: 0.9rem; font-size: 0.86rem; color: #fff; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+    .play-meta { margin-top: 0.25rem; font-size: 0.74rem; color: rgba(255,255,255,0.66); }
+
+    /* product entry bar */
+    .entry-bar {
+      display: grid; grid-template-columns: 1.35fr repeat(3, minmax(0,1fr));
+      gap: 1px; margin-top: 1rem; overflow: hidden;
+      border: 1px solid rgba(114,226,221,0.22); border-radius: var(--radius-sm);
+      background: rgba(114,226,221,0.16);
+    }
+    .entry {
+      min-width: 0; padding: 0.9rem 1rem; text-decoration: none;
+      color: var(--color-text); background: rgba(15,15,26,0.96);
+      transition: background 0.18s ease-out, color 0.18s ease-out;
+    }
+    .entry:hover, .entry:focus-visible { background: #162A2D; color: #fff; }
+    .entry-label {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 0.5rem; font-size: 0.88rem; font-weight: 700;
+    }
+    .entry-label svg { flex: 0 0 auto; color: var(--color-accent-soft); width: 16px; height: 16px; }
+    .entry small { display: block; margin-top: 0.18rem; color: var(--color-text-muted); font-size: 0.72rem; line-height: 1.45; }
+    .entry--primary { background: #123235; }
+    .entry--primary .entry-label { color: #91F3EE; }
+
+    /* ============================================================
+       Pain cards
+       ============================================================ */
     .pain-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.2rem; margin-top: 2rem;
+      display: grid; gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
     .pain-card {
-      padding: 1.8rem; background: rgba(26,26,46,0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); transition: all 0.4s; position: relative; overflow: hidden;
+      padding: 1.7rem; background: var(--color-surface);
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
     }
     .pain-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
       opacity: 0; transition: opacity 0.3s;
     }
-    .pain-card:nth-child(1)::before { background: #FF6B6B; }
-    .pain-card:nth-child(2)::before { background: #FDCB6E; }
-    .pain-card:nth-child(3)::before { background: #6C5CE7; }
-    .pain-card:nth-child(4)::before { background: #00CEC9; }
-    .pain-card:hover { transform: translateY(-6px); border-color: rgba(108,92,231,0.5); box-shadow: 0 16px 48px rgba(108,92,231,0.12); }
+    .pain-card:nth-child(1)::before { background: var(--color-danger); }
+    .pain-card:nth-child(2)::before { background: var(--color-gold); }
+    .pain-card:nth-child(3)::before { background: var(--color-primary); }
+    .pain-card:nth-child(4)::before { background: var(--color-accent); }
+    .pain-card:hover { transform: translateY(-5px); border-color: var(--color-border-strong); box-shadow: var(--shadow-hover); }
     .pain-card:hover::before { opacity: 1; }
-    .pain-icon { font-size: 1.8rem; margin-bottom: 0.8rem; display: block; }
-    .pain-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; }
-    .pain-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; }
+    .pain-card .icon { font-size: 1.7rem; display: block; margin-bottom: 0.7rem; }
+    .pain-card h3 { font-size: 1.04rem; margin-bottom: 0.45rem; }
+    .pain-card p { color: var(--color-text-muted); font-size: 0.87rem; line-height: 1.7; }
 
-    /* ===== Scenario ===== */
-    .scenario-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap: 1.5rem; margin-top: 2rem; }
-    .scenario-card {
-      padding: 2rem; background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius); position: relative; overflow: hidden;
+    /* ============================================================
+       Pipeline
+       ============================================================ */
+    .pipeline {
+      display: grid; gap: 1.5rem; margin-top: 0.5rem;
+      grid-template-columns: repeat(3, 1fr); position: relative;
     }
-    .scenario-card::before {
-      content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-    }
-    .scenario-card:nth-child(1)::before { background: linear-gradient(180deg, #6C5CE7, #00CEC9); }
-    .scenario-card:nth-child(2)::before { background: linear-gradient(180deg, #00CEC9, #6C5CE7); }
-    .scenario-tag {
-      display: inline-block; padding: 0.2rem 0.7rem; background: rgba(108,92,231,0.15);
-      border-radius: 6px; font-size: 0.75rem; color: var(--primary-light); margin-bottom: 0.8rem;
-    }
-    .scenario-card h3 { font-size: 1.1rem; margin-bottom: 0.8rem; }
-    .scenario-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.8; }
-
-    /* ===== Pipeline ===== */
-    .pipeline-steps {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem; margin-top: 2.5rem; position: relative;
-    }
-    .pipeline-steps::before {
+    .pipeline::before {
       content: ''; position: absolute; top: 44px; left: 16.67%; right: 16.67%;
-      height: 2px; background: var(--gradient-1); opacity: 0.3;
+      height: 2px; background: var(--gradient-brand); opacity: 0.3;
     }
     .pipeline-step {
-      text-align: center; padding: 1.8rem 1.2rem; background: var(--bg-card);
-      border: 1px solid var(--border); border-radius: var(--radius); transition: all 0.4s; position: relative;
+      text-align: center; padding: 1.7rem 1.2rem;
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: var(--radius); position: relative;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
-    .pipeline-step:hover { transform: translateY(-6px) scale(1.02); border-color: var(--primary); box-shadow: 0 16px 50px rgba(108,92,231,0.2); }
+    .pipeline-step:hover { transform: translateY(-5px); border-color: var(--color-accent); box-shadow: var(--shadow-hover); }
     .step-icon {
-      width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center;
-      justify-content: center; margin: 0 auto 1.2rem; font-size: 1.6rem; position: relative; z-index: 1;
-    }
-    .step-icon.ocr { background: rgba(108,92,231,0.15); box-shadow: 0 0 25px rgba(108,92,231,0.1); }
-    .step-icon.solve { background: rgba(0,206,201,0.15); box-shadow: 0 0 25px rgba(0,206,201,0.1); }
-    .step-icon.viz { background: rgba(255,107,107,0.15); box-shadow: 0 0 25px rgba(255,107,107,0.1); }
-    .pipeline-step h3 { font-size: 1.1rem; margin-bottom: 0.6rem; }
-    .pipeline-step p { color: var(--text-secondary); font-size: 0.85rem; }
-    .step-number { position: absolute; top: 0.8rem; right: 1.2rem; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.5; font-weight: 700; }
-
-    /* ===== Feature Showcase ===== */
-    .feature-showcase {
-      margin-top: 2rem; padding: 2rem; background: rgba(26,26,46,0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(108,92,231,0.18); border-radius: var(--radius); margin-bottom: 2rem;
-      transition: border-color 0.4s, box-shadow 0.4s;
-    }
-    .feature-showcase:hover {
-      border-color: rgba(108,92,231,0.4);
-      box-shadow: 0 8px 40px rgba(108,92,231,0.08);
-    }
-    .feature-showcase-header {
-      display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
-    }
-    .feature-num {
-      width: 40px; height: 40px; border-radius: 10px; background: var(--gradient-2);
+      width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 1.1rem;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.9rem; color: white; flex-shrink: 0;
+      position: relative; z-index: 1;
     }
-    .feature-showcase-header h3 { font-size: 1.2rem; }
-    .feature-showcase-header p { font-size: 0.85rem; color: var(--text-secondary); }
-    .feature-img-row {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem; margin-bottom: 1.2rem;
+    .step-icon.ocr { background: rgba(108,92,231,0.15); box-shadow: 0 0 24px rgba(108,92,231,0.10); }
+    .step-icon.solve { background: rgba(0,206,201,0.15); box-shadow: 0 0 24px rgba(0,206,201,0.10); }
+    .step-icon.viz { background: rgba(255,107,107,0.15); box-shadow: 0 0 24px rgba(255,107,107,0.10); }
+    .step-num {
+      position: absolute; top: 0.8rem; right: 1.1rem;
+      font-size: 0.7rem; font-weight: 700; color: var(--color-text-dim);
     }
-    .feature-img-row img {
-      width: 100%; border-radius: 10px; border: 1px solid var(--border);
-      transition: transform 0.3s; cursor: pointer;
+    .pipeline-step h3 { font-size: 1.08rem; margin-bottom: 0.5rem; }
+    .pipeline-step p { color: var(--color-text-muted); font-size: 0.85rem; }
+
+    /* ============================================================
+       Feature grid (9 capabilities)
+       ============================================================ */
+    .feature-grid {
+      display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-bottom: 3rem;
     }
-    .feature-img-row img:hover { transform: scale(1.03); }
-    .feature-desc { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.8; }
-    .feature-highlights {
-      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;
+    .feature-tile {
+      padding: 1.3rem; background: var(--color-surface);
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
+    .feature-tile:hover { transform: translateY(-4px); border-color: var(--color-accent); box-shadow: var(--shadow-hover); }
+    .feature-tile .icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; margin-bottom: 0.8rem;
+      background: rgba(108,92,231,0.14);
+    }
+    .feature-tile h3 { font-size: 0.98rem; margin-bottom: 0.3rem; }
+    .feature-tile p { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; }
+
+    /* featured deep-dive */
+    .deepdive {
+      padding: 1.8rem; margin-bottom: 1.5rem;
+      background: var(--color-surface-2);
+      border: 1px solid rgba(108,92,231,0.18); border-radius: var(--radius);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .deepdive:hover { border-color: rgba(108,92,231,0.4); box-shadow: 0 8px 40px rgba(108,92,231,0.08); }
+    .deepdive-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.3rem; }
+    .deepdive-num {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: var(--gradient-brand);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem; color: #fff;
+    }
+    .deepdive-head h3 { font-size: 1.18rem; }
+    .deepdive-head p { font-size: 0.85rem; color: var(--color-text-muted); }
+    .deepdive-body {
+      display: grid; gap: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: center;
+    }
+    .deepdive-body img {
+      width: 100%; border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border); cursor: zoom-in;
+      transition: transform 0.3s;
+    }
+    .deepdive-body img:hover { transform: scale(1.02); }
+    .deepdive-thumbs {
+      display: grid; gap: 0.8rem; margin-top: 1.2rem;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+    .deepdive-thumbs img {
+      width: 100%; border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border); cursor: zoom-in;
+      transition: transform 0.3s;
+    }
+    .deepdive-thumbs img:hover { transform: scale(1.03); }
+    .deepdive-text p { color: var(--color-text-muted); font-size: 0.88rem; line-height: 1.8; margin-bottom: 1rem; }
+    .hl-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .hl-tag {
-      padding: 0.25rem 0.7rem; background: rgba(108,92,231,0.1);
-      border: 1px solid rgba(108,92,231,0.2); border-radius: 6px;
-      font-size: 0.78rem; color: var(--primary-light);
+      padding: 0.24rem 0.7rem; background: rgba(108,92,231,0.10);
+      border: 1px solid rgba(108,92,231,0.22); border-radius: 6px;
+      font-size: 0.76rem; color: var(--color-accent-soft);
     }
 
-    /* ===== Architecture ===== */
-    .arch-diagram {
-      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 2rem; margin-top: 2rem; font-family: 'Cascadia Code', 'Fira Code', monospace;
-      font-size: 0.72rem; line-height: 1.6; color: var(--text-secondary);
-      overflow-x: auto; white-space: pre;
+    /* geometry SVG demo panel */
+    .geo-demo {
+      background: #12122a; border: 1px solid rgba(108,92,231,0.25);
+      border-radius: 12px; padding: 1.2rem; position: relative;
+      overflow: hidden; min-height: 240px;
     }
+    .geo-demo .tag {
+      font-size: 0.7rem; color: var(--color-gold);
+      font-weight: 600; letter-spacing: 0.06em; margin-bottom: 0.5rem;
+    }
+    .geo-demo svg { width: 100%; height: auto; }
+
+    /* ============================================================
+       Tech core (architecture + AI + stack)
+       ============================================================ */
+    .arch-layers { display: flex; flex-direction: column; gap: 0.8rem; }
     .arch-layer {
-      border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem;
-      text-align: center;
+      border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+      padding: 1rem 1.1rem; background: var(--color-surface);
     }
-    .arch-layer-title { font-weight: 700; color: var(--primary-light); font-size: 0.85rem; margin-bottom: 0.5rem; font-family: inherit; }
-    .arch-items { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    .arch-layer h4 {
+      font-size: 0.82rem; color: var(--color-accent-soft); margin-bottom: 0.6rem; font-weight: 700;
+    }
+    .arch-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .arch-item {
-      padding: 0.3rem 0.8rem; background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2);
-      border-radius: 6px; font-size: 0.78rem; font-family: inherit;
+      padding: 0.3rem 0.75rem; background: rgba(108,92,231,0.10);
+      border: 1px solid rgba(108,92,231,0.20); border-radius: 6px;
+      font-size: 0.77rem;
     }
-    .arch-item.accent { background: rgba(0,206,201,0.1); border-color: rgba(0,206,201,0.2); color: var(--accent); }
-    .arch-item.warn { background: rgba(255,107,107,0.1); border-color: rgba(255,107,107,0.2); color: #FF6B6B; }
+    .arch-item.accent { background: rgba(0,206,201,0.10); border-color: rgba(0,206,201,0.22); color: var(--color-gold); }
+    .arch-item.warn { background: rgba(255,107,107,0.10); border-color: rgba(255,107,107,0.22); color: var(--color-danger); }
 
-    /* ===== AI Section ===== */
-    .ai-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.2rem; margin-top: 2rem;
+    .ai-cards {
+      display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
     .ai-card {
-      padding: 1.5rem; background: rgba(26,26,46,0.5);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); text-align: center; transition: all 0.3s;
+      padding: 1.4rem; background: var(--color-surface);
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      text-align: center; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
     }
-    .ai-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 12px 35px rgba(108,92,231,0.12); }
-    .ai-card-icon { font-size: 2rem; margin-bottom: 0.8rem; }
-    .ai-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
-    .ai-card .ai-model { font-size: 0.78rem; color: var(--accent); margin-bottom: 0.5rem; }
-    .ai-card p { font-size: 0.82rem; color: var(--text-secondary); }
+    .ai-card:hover { transform: translateY(-5px); border-color: var(--color-accent); box-shadow: var(--shadow-hover); }
+    .ai-card .icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+    .ai-card h4 { font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .ai-card .model { font-size: 0.76rem; color: var(--color-gold); margin-bottom: 0.45rem; }
+    .ai-card p { font-size: 0.8rem; color: var(--color-text-muted); }
 
-    .ai-bind-table {
-      width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.85rem;
+    .stack-grid {
+      display: grid; gap: 0.9rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
-    .ai-bind-table th {
-      text-align: left; padding: 0.8rem 1rem; background: rgba(108,92,231,0.1);
-      border-bottom: 2px solid var(--primary); font-size: 0.82rem; color: var(--primary-light);
+    .stack-item {
+      display: flex; align-items: center; gap: 0.8rem; padding: 0.9rem 1.1rem;
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      border-radius: 12px; transition: transform 0.3s, border-color 0.3s;
     }
-    .ai-bind-table td {
-      padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-secondary);
+    .stack-item:hover { transform: translateY(-3px); border-color: var(--color-accent); }
+    .stack-item .icon {
+      width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
     }
-    .ai-bind-table tr:hover td { color: var(--text); background: rgba(108,92,231,0.03); }
+    .stack-item .icon.flutter { background: rgba(79,196,255,0.15); }
+    .stack-item .icon.ai { background: rgba(108,92,231,0.15); }
+    .stack-item .icon.db { background: rgba(255,159,67,0.15); }
+    .stack-item .icon.math { background: rgba(0,206,201,0.15); }
+    .stack-item .icon.edit { background: rgba(162,155,254,0.15); }
+    .stack-item .icon.viz { background: rgba(255,107,107,0.15); }
+    .stack-item h4 { font-size: 0.9rem; }
+    .stack-item span { font-size: 0.76rem; color: var(--color-text-muted); display: block; }
 
-    /* ===== Roadmap ===== */
-    .roadmap-phases {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.2rem; margin-top: 2rem;
+    .subhead {
+      font-size: 1.05rem; font-weight: 700; margin: 2.5rem 0 1rem;
+      color: var(--color-text); position: relative; padding-left: 0.9rem;
     }
-    .phase-card {
-      padding: 1.5rem; background: rgba(26,26,46,0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); position: relative; overflow: hidden; transition: all 0.3s;
+    .subhead::before {
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 1.05rem; background: var(--gradient-brand); border-radius: 2px;
     }
-    .phase-card:hover { border-color: rgba(108,92,231,0.5); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(108,92,231,0.08); }
-    .phase-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    .subhead:first-of-type { margin-top: 0; }
+
+    /* ============================================================
+       Comparison + Roadmap
+       ============================================================ */
+    .roadmap {
+      display: grid; gap: 1.1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
-    .phase-card.done::before { background: #00CEC9; }
-    .phase-card.active::before { background: #FDCB6E; }
-    .phase-card.planned::before { background: rgba(108,92,231,0.5); }
+    .phase {
+      padding: 1.4rem; background: var(--color-surface);
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      position: relative; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .phase:hover { transform: translateY(-3px); border-color: var(--color-border-strong); box-shadow: var(--shadow-hover); }
+    .phase::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .phase.done::before { background: var(--color-accent); }
+    .phase.active::before { background: var(--color-gold); }
+    .phase.planned::before { background: rgba(108,92,231,0.55); }
     .phase-status {
-      display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 0.15rem 0.5rem;
-      border-radius: 4px; margin-bottom: 0.6rem;
+      display: inline-block; font-size: 0.71rem; font-weight: 600;
+      padding: 0.15rem 0.5rem; border-radius: 4px; margin-bottom: 0.55rem;
     }
-    .phase-status.done { background: rgba(0,206,201,0.15); color: #00CEC9; }
-    .phase-status.active { background: rgba(253,203,110,0.15); color: #FDCB6E; }
-    .phase-status.planned { background: rgba(108,92,231,0.15); color: var(--primary-light); }
-    .phase-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .phase-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; }
+    .phase-status.done { background: rgba(0,206,201,0.15); color: var(--color-accent); }
+    .phase-status.active { background: rgba(253,203,110,0.15); color: var(--color-gold); }
+    .phase-status.planned { background: rgba(108,92,231,0.15); color: var(--color-primary-soft); }
+    .phase h3 { font-size: 0.98rem; margin-bottom: 0.45rem; }
+    .phase p { color: var(--color-text-muted); font-size: 0.83rem; line-height: 1.6; }
 
-    /* ===== Competition ===== */
-    .comp-table {
-      width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.85rem;
-      background: var(--bg-card); border-radius: var(--radius); overflow: hidden;
-    }
-    .comp-table th {
-      text-align: center; padding: 1rem; background: rgba(108,92,231,0.1);
-      border-bottom: 2px solid var(--primary); font-size: 0.85rem;
-    }
-    .comp-table th:first-child { text-align: left; }
-    .comp-table td {
-      padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); text-align: center;
-      color: var(--text-secondary);
-    }
-    .comp-table td:first-child { text-align: left; color: var(--text); font-weight: 500; }
-    .comp-table tr:last-child td { border-bottom: none; }
-    .comp-table tr:hover td { background: rgba(108,92,231,0.03); }
-    .comp-highlight { color: var(--accent) !important; font-weight: 600; }
-
-    /* ===== Market ===== */
-    .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1.2rem; margin-top: 2rem; }
-    .market-card {
-      padding: 1.5rem; background: rgba(26,26,46,0.5);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); text-align: center; transition: all 0.3s;
-    }
-    .market-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 12px 35px rgba(108,92,231,0.12); }
-    .market-value { font-size: 2rem; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .market-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem; }
-    .market-desc { font-size: 0.75rem; color: var(--text-secondary); opacity: 0.7; margin-top: 0.2rem; }
-
-    /* ===== Tech Stack ===== */
-    .tech-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem; margin-top: 2rem;
-    }
-    .tech-item {
-      display: flex; align-items: center; gap: 0.8rem; padding: 1rem 1.2rem;
-      background: rgba(26,26,46,0.5);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border); border-radius: 12px; transition: all 0.3s;
-    }
-    .tech-item:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(108,92,231,0.1); }
-    .tech-icon {
-      width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center;
-      justify-content: center; font-size: 1.1rem; flex-shrink: 0;
-    }
-    .tech-icon.flutter { background: rgba(79,196,255,0.15); }
-    .tech-icon.ai { background: rgba(108,92,231,0.15); }
-    .tech-icon.db { background: rgba(255,159,67,0.15); }
-    .tech-icon.math { background: rgba(0,206,201,0.15); }
-    .tech-icon.edit { background: rgba(162,155,254,0.15); }
-    .tech-icon.viz { background: rgba(255,107,107,0.15); }
-    .tech-info h4 { font-size: 0.9rem; margin-bottom: 0.1rem; }
-    .tech-info span { font-size: 0.78rem; color: var(--text-secondary); }
-
-    /* ===== Timeline ===== */
-    .timeline { max-width: 750px; margin: 2rem auto 0; position: relative; padding-left: 2rem; }
+    /* ============================================================
+       Timeline (versions, collapsible)
+       ============================================================ */
+    .timeline { max-width: 760px; margin: 0 auto; position: relative; padding-left: 2rem; }
     .timeline::before {
       content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px;
-      background: linear-gradient(180deg, var(--primary), var(--accent)); opacity: 0.3;
+      background: linear-gradient(180deg, var(--color-accent), var(--color-gold)); opacity: 0.3;
     }
-    .timeline-item { position: relative; padding: 0 0 2rem 2.2rem; }
+    .timeline-item { position: relative; padding: 0 0 1.8rem 2.2rem; }
     .timeline-item:last-child { padding-bottom: 0; }
     .timeline-dot {
       position: absolute; left: -2px; top: 4px; width: 18px; height: 18px;
-      border-radius: 50%; background: var(--bg); border: 3px solid var(--primary); z-index: 1;
+      border-radius: 50%; background: var(--color-bg); border: 3px solid var(--color-accent); z-index: 1;
     }
-    .timeline-item:first-child .timeline-dot { background: var(--primary); box-shadow: 0 0 12px rgba(108,92,231,0.5); animation: timelinePulse 2s ease-in-out infinite; }
-    @keyframes timelinePulse { 0%,100% { box-shadow: 0 0 12px rgba(108,92,231,0.5); } 50% { box-shadow: 0 0 20px rgba(108,92,231,0.8); } }
-    .timeline-version { font-size: 0.78rem; font-weight: 700; color: var(--primary-light); margin-bottom: 0.2rem; }
+    .timeline-item:first-child .timeline-dot {
+      background: var(--color-accent); box-shadow: 0 0 12px rgba(0,206,201,0.5);
+    }
+    .timeline-ver { font-size: 0.78rem; font-weight: 700; color: var(--color-accent-soft); margin-bottom: 0.2rem; }
     .timeline-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
-    .timeline-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+    .timeline-desc { font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.6; }
 
-    /* ===== Gallery ===== */
-    .gallery-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 0.8rem; margin-top: 2rem;
+    details.versions-more {
+      margin-top: 1.5rem; max-width: 760px; margin-inline: auto;
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      background: var(--color-surface); overflow: hidden;
+    }
+    details.versions-more summary {
+      cursor: pointer; padding: 1rem 1.2rem; font-weight: 600; font-size: 0.92rem;
+      list-style: none; color: var(--color-text);
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    details.versions-more summary::-webkit-details-marker { display: none; }
+    details.versions-more[open] summary { border-bottom: 1px solid var(--color-border); }
+    details.versions-more .timeline { padding-top: 1.5rem; }
+
+    /* ============================================================
+       Gallery + Team
+       ============================================================ */
+    .gallery {
+      display: grid; gap: 0.8rem;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
     .gallery-item {
-      border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
-      transition: all 0.3s; cursor: pointer; position: relative;
+      border-radius: var(--radius-sm); overflow: hidden;
+      border: 1px solid var(--color-border); cursor: zoom-in;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      background: var(--color-surface);
     }
-    .gallery-item:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 12px 40px rgba(108,92,231,0.15); border-color: var(--primary); }
-    .gallery-item img { width: 100%; display: block; aspect-ratio: 9/16; object-fit: cover; }
-    .gallery-caption {
-      padding: 0.5rem 0.7rem; background: var(--bg-card); font-size: 0.75rem;
-      color: var(--text-secondary); text-align: center;
-    }
+    .gallery-item:hover { transform: translateY(-4px) scale(1.02); border-color: var(--color-accent); box-shadow: var(--shadow-hover); }
+    .gallery-item img { width: 100%; aspect-ratio: 9/16; object-fit: cover; }
+    .gallery-cap { padding: 0.45rem 0.6rem; font-size: 0.74rem; color: var(--color-text-muted); text-align: center; }
 
-    /* ===== CTA ===== */
-    .cta-card {
-      max-width: 700px; margin: 0 auto; padding: 3.5rem 2.5rem;
-      background: rgba(26,26,46,0.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(108,92,231,0.2); border-radius: 24px; position: relative; overflow: hidden; text-align: center;
+    .team-group-label {
+      display: block; text-align: center; margin-bottom: 1.2rem;
     }
-    .cta-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradient-1); box-shadow: 0 0 20px rgba(108,92,231,0.4); }
-    .cta-card h2 { font-size: 1.8rem; margin-bottom: 0.8rem; }
-    .cta-card p { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 1rem; }
+    .team-group-label span {
+      display: inline-block; padding: 0.3rem 1rem; border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+    }
+    .team-grid {
+      display: grid; gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .team-card {
+      padding: 1.4rem; background: var(--color-surface);
+      border: 1px solid var(--color-border); border-radius: var(--radius);
+      text-align: center; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .team-card:hover { transform: translateY(-4px); border-color: var(--color-accent); box-shadow: var(--shadow-hover); }
+    .team-card .avatar { font-size: 1.9rem; margin-bottom: 0.5rem; }
+    .team-card h4 { font-size: 0.98rem; margin-bottom: 0.2rem; }
+    .team-card .role { font-size: 0.78rem; color: var(--color-gold); margin-bottom: 0.5rem; }
+    .team-card p { font-size: 0.8rem; color: var(--color-text-muted); }
 
-    /* ===== Footer ===== */
-    footer {
-      padding: 2.5rem 2rem; text-align: center;
+    /* ============================================================
+       CTA + Footer
+       ============================================================ */
+    .cta {
+      max-width: 720px; margin-inline: auto; padding: clamp(2rem, 5vw, 3.5rem);
+      background: var(--color-surface-2);
+      border: 1px solid rgba(108,92,231,0.22); border-radius: 24px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .cta::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: var(--gradient-brand); box-shadow: 0 0 20px rgba(108,92,231,0.4);
+    }
+    .cta h2 { font-size: clamp(1.5rem, 3vw, 1.9rem); margin-bottom: 0.7rem; }
+    .cta p { color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 1rem; }
+    .cta-buttons { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+    .footer {
+      padding: 2.5rem clamp(1rem, 4vw, 2rem) 2rem; text-align: center;
       border-top: 1px solid rgba(108,92,231,0.15);
-      color: var(--text-secondary); font-size: 0.82rem;
+      color: var(--color-text-muted); font-size: 0.82rem;
       background: linear-gradient(180deg, transparent, rgba(108,92,231,0.03));
     }
-    footer a { color: var(--primary-light); text-decoration: none; transition: color 0.3s; }
-    footer a:hover { color: var(--accent); text-decoration: none; }
+    .footer a { color: var(--color-accent-soft); text-decoration: none; transition: color 0.3s; }
+    .footer a:hover { color: var(--color-gold); }
+    .footer p + p { margin-top: 0.4rem; }
 
-    /* ===== Bubble decorations ===== */
-    .bubble-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .bubble {
-      position: absolute; border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle at 30% 30%, rgba(108,92,231,0.12), rgba(0,206,201,0.06));
-      border: 1px solid rgba(108,92,231,0.08);
-      animation: bubbleFloat linear infinite;
-    }
-    @keyframes bubbleFloat {
-      0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(-120px) scale(1); opacity: 0; }
-    }
-
-    /* ===== Mouse light wave (ripple on click) ===== */
-    .ripple {
-      position: fixed; pointer-events: none; border-radius: 50%;
-      border: 2px solid rgba(108,92,231,0.5);
-      animation: rippleExpand 0.8s ease-out forwards;
-      z-index: 999;
-    }
-    @keyframes rippleExpand {
-      0% { width: 0; height: 0; opacity: 1; }
-      100% { width: 300px; height: 300px; opacity: 0; }
-    }
-
-    /* ===== Mouse glow trail ===== */
-    .cursor-glow {
-      position: fixed; pointer-events: none; z-index: 998;
-      width: 260px; height: 260px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(108,92,231,0.08) 0%, rgba(0,206,201,0.04) 40%, transparent 70%);
-      transform: translate(-50%, -50%);
-      transition: left 0.08s ease-out, top 0.08s ease-out;
-    }
-
-    /* ===== Animations ===== */
-    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
-
-    /* ===== Video Cover Hover ===== */
-#videoPlayerWrap:hover #playBtn {
-  transform: scale(1.12);
-  box-shadow: 0 8px 40px rgba(108,92,231,0.7);
-  background: rgba(108,92,231,1);
-}
-#videoPlayerWrap:hover #videoCover {
-  transform: scale(1.03);
-}
-#videoPlayerWrap:hover #playOverlay {
-  background: rgba(15,15,26,0.2);
-}
-
-/* ===== Lightbox ===== */
+    /* ============================================================
+       Lightbox
+       ============================================================ */
     .lightbox {
-      display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.9);
-      align-items: center; justify-content: center; cursor: pointer;
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+      padding: 2rem; cursor: zoom-out;
     }
     .lightbox.active { display: flex; }
-    .lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+    .lightbox img { max-width: 92%; max-height: 90%; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .hero-stats { gap: 1.2rem; flex-wrap: wrap; }
-      .pipeline-steps { grid-template-columns: 1fr; }
-      .pipeline-steps::before { display: none; }
-      .pain-grid, .scenario-cards, .roadmap-phases { grid-template-columns: 1fr; }
-      .feature-img-row { grid-template-columns: repeat(2, 1fr); }
-      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-      .cta-card { padding: 2rem 1.2rem; }
-    }
-    @media (max-width: 480px) {
-      .tech-grid { grid-template-columns: 1fr; }
-      .feature-img-row { grid-template-columns: 1fr; }
-      div[style*="grid-template-columns: 1fr 1fr"][style*="gap:1.5rem"] { grid-template-columns: 1fr !important; }
-    }
-    /* ===== Particle Canvas ===== */
+    /* ============================================================
+       Ambient sci-fi motion: particle constellation, cursor glow,
+       energy ripple. (JS-gated; degrades on touch / reduced-motion.)
+       ============================================================ */
     #particleCanvas {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      position: fixed; inset: 0; width: 100%; height: 100%;
       z-index: -1; pointer-events: none;
     }
-    .bubble-container { display: none !important; }
-
-    /* ===== Card Glow Effect ===== */
-    .glow-card { position: relative; overflow: hidden; }
-    .glow-card .card-glow {
-      position: absolute; width: 300px; height: 300px; border-radius: 50%;
-      pointer-events: none; background: radial-gradient(circle, rgba(108,92,231,0.12) 0%, rgba(0,206,201,0.06) 40%, transparent 70%);
-      opacity: 0; transition: opacity 0.4s ease; transform: translate(-50%, -50%);
-      z-index: 0; mix-blend-mode: screen;
+    #hero3d {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      z-index: 2; pointer-events: none; mix-blend-mode: screen;
     }
-    .glow-card:hover .card-glow { opacity: 1; }
-    .glow-card > *:not(.card-glow) { position: relative; z-index: 1; }
-
-    /* ===== Scroll Section Reveals ===== */
-    .reveal-section {
-      opacity: 0; transition: opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1);
+    .cursor-glow {
+      position: fixed; top: 0; left: 0; width: 340px; height: 340px;
+      border-radius: 50%; pointer-events: none; z-index: 998;
+      background: radial-gradient(circle, rgba(108,92,231,0.12) 0%, rgba(0,206,201,0.06) 40%, transparent 70%);
+      mix-blend-mode: screen; will-change: transform;
+      transform: translate(-9999px, -9999px);
     }
-    .reveal-section.reveal-from-left { transform: translateX(-60px); }
-    .reveal-section.reveal-from-right { transform: translateX(60px); }
-    .reveal-section.reveal-from-bottom { transform: translateY(50px); }
-    .reveal-section.reveal-scale { transform: scale(0.92); }
-    .reveal-section.revealed { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
-    @media (max-width: 768px) {
-      .reveal-section.reveal-from-left, .reveal-section.reveal-from-right,
-      .reveal-section.reveal-from-bottom, .reveal-section.reveal-scale { transform: translateY(30px); }
-      .cursor-glow { display: none; }
+    .ripple {
+      position: fixed; pointer-events: none; z-index: 997;
+      width: 8px; height: 8px; border-radius: 50%;
+      border: 2px solid rgba(0,206,201,0.65);
+      box-shadow: 0 0 14px rgba(0,206,201,0.35), inset 0 0 8px rgba(108,92,231,0.4);
+      animation: rippleExpand 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+    @keyframes rippleExpand {
+      0%   { width: 8px;   height: 8px;   opacity: 1; transform: translate(-4px, -4px); }
+      100% { width: 150px; height: 150px; opacity: 0; transform: translate(-75px, -75px); }
+    }
+    /* hero drifting aurora — subtle living backdrop */
+    .hero-aurora {
+      position: absolute; inset: -20%; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 40% 30% at 30% 40%, rgba(108,92,231,0.18), transparent 60%),
+        radial-gradient(ellipse 35% 25% at 70% 60%, rgba(0,206,201,0.14), transparent 60%);
+      filter: blur(20px);
+      animation: auroraDrift 22s ease-in-out infinite alternate;
+    }
+    @keyframes auroraDrift {
+      0%   { transform: translate3d(-2%, -1%, 0) scale(1); }
+      50%  { transform: translate3d(2%, 2%, 0) scale(1.06); }
+      100% { transform: translate3d(1%, -2%, 0) scale(1.02); }
+    }
+
+    /* ============================================================
+       Reveal animation
+       ============================================================ */
+    .reveal { transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+    /* hide only when JS is available — degrades to fully visible if JS fails/disabled */
+    html.js .reveal { opacity: 0; transform: translateY(28px); }
+    html.js .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       Responsive
+       ============================================================ */
+    @media (max-width: 980px) {
+      .hero { min-height: auto; padding-top: 7rem; }
+      .pipeline { grid-template-columns: 1fr; }
+      .pipeline::before { display: none; }
+    }
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .hero-buttons .btn { flex: 1 1 100%; }
+      .entry-bar { grid-template-columns: repeat(2, 1fr); }
+      .deepdive-body { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 540px) {
+      .entry-bar { grid-template-columns: 1fr; }
+      .cta-buttons .btn { flex: 1 1 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+    }
+    @media (prefers-contrast: more) {
+      :root { --color-text-muted: #C8C8E0; --color-border: rgba(114,226,221,0.32); }
     }
   </style>
 </head>
 <body>
-<!-- Particle Canvas Background -->
-<canvas id="particleCanvas"></canvas>
-<div class="scroll-progress"></div>
-<!-- Bubble decorations -->
-<div class="bubble-container" id="bubbleContainer"></div>
-<!-- Cursor glow trail -->
-<div class="cursor-glow" id="cursorGlow"></div>
-<!-- Lightbox -->
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
-  <img id="lightbox-img" src="" alt="">
-</div>
+<a href="#main-content" class="skip-link">跳到主要内容</a>
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+<canvas id="particleCanvas" aria-hidden="true"></canvas>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
-<!-- Navigation -->
-<nav id="navbar">
-  <a href="#" class="nav-logo">
-    <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="url(#g1)"/><path d="M8 22L16 10L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="17" r="2" fill="white"/><defs><linearGradient id="g1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#6C5CE7"/><stop offset="1" stop-color="#00CEC9"/></linearGradient></defs></svg>
+<!-- ============ Navigation ============ -->
+<nav class="nav" id="navbar" aria-label="主导航">
+  <a href="#" class="nav-logo" aria-label="MathMate 首页">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect width="32" height="32" rx="8" fill="url(#g1)"/><path d="M8 22L16 10L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="17" r="2" fill="white"/><defs><linearGradient id="g1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#6C5CE7"/><stop offset="1" stop-color="#00CEC9"/></linearGradient></defs></svg>
     MathMate
   </a>
   <ul class="nav-links">
-    <li><a href="#insights">用户洞察</a></li>
+    <li><a href="#pain">为什么</a></li>
     <li><a href="#pipeline">核心流程</a></li>
-    <li><a href="#showcase">功能展示</a></li>
-    <li><a href="#architecture">技术架构</a></li>
-    <li><a href="#ai">AI 能力</a></li>
-    <li><a href="#roadmap">技术路线</a></li>
-    <li><a href="#competition">竞争优势</a></li>
-    <li><a href="#market">市场前景</a></li>
-    <li><a href="tech.html">技术详解</a></li>
-    <li><a href="#team">团队介绍</a></li>
+    <li><a href="#features">能力</a></li>
+    <li><a href="#tech">技术内核</a></li>
+    <li><a href="#evidence">对比与演进</a></li>
+    <li><a href="#team">团队</a></li>
   </ul>
-  <a href="tech.html" class="nav-github" style="margin-right:0.5rem;">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    技术详解
-  </a>
-  <a href="https://github.com/mzk-C4/mathmate" class="nav-github" target="_blank" rel="noopener">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-    GitHub
-  </a>
+  <div class="nav-actions">
+    <a href="tech.html" class="btn btn-secondary">技术详解</a>
+    <a href="https://mathmate.top/website" class="btn btn-primary" target="_blank" rel="noopener">在线使用</a>
+  </div>
 </nav>
 
-<!-- ====== Hero ====== -->
-<section class="hero" id="hero">
-  <div class="hero-content fade-in">
-    <div class="hero-badge"><span class="dot"></span> v2.2.0 &middot; AI Native Math Learning</div>
-    <h1>MathMate<br><span class="gradient-text">重塑数学学习</span></h1>
-    <p>一款以 AI 大模型为核心驱动的智能数学学习应用，深度融合多模态 AI 与交互式可视化，提供从拍照搜题到动态几何的一站式学习体验。</p>
-    <div class="hero-buttons">
-      <a href="https://www.bilibili.com/video/BV1EfLJ6bEnw" class="btn-primary" target="_blank" style="background:linear-gradient(135deg, #6C5CE7 0%, #A29BFE 50%, #764ba2 100%);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        演示视频
-      </a>
-      <a href="#showcase" class="btn-secondary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        功能展示
-      </a>
-      <a href="https://mathmate.top/app/" class="btn-secondary" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-        在线体验 App
-      </a>
-      <a href="https://github.com/mzk-C4/mathmate" class="btn-secondary" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        查看源码
-      </a>
-      <a href="https://mathmate.top/app/app-debug.apk" class="btn-secondary" target="_blank">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载 APK
-      </a>
-    </div>
-    <div style="margin-top:2.5rem;margin-bottom:1rem;max-width:720px;margin-left:auto;margin-right:auto;" class="fade-in">
-      <div id="videoPlayerWrap" style="position:relative;width:100%;padding-bottom:56.25%;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:0 12px 48px rgba(108,92,231,0.25);cursor:pointer;background:#000;" onclick="loadBilibiliPlayer()">
-        <img id="videoCover" src="images/video-cover.jpg" alt="MathMate 演示视频封面" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transition:transform 0.4s;">
-        <div id="playOverlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(15,15,26,0.35);transition:background 0.3s;">
-          <div id="playBtn" style="width:72px;height:72px;border-radius:50%;background:rgba(108,92,231,0.85);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 30px rgba(108,92,231,0.5);transition:all 0.3s;backdrop-filter:blur(8px);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><polygon points="8 5 20 12 8 19"/></svg>
-          </div>
-          <span style="margin-top:1rem;font-size:0.88rem;color:rgba(255,255,255,0.9);font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,0.5);">点击播放演示视频</span>
-          <span style="margin-top:0.3rem;font-size:0.75rem;color:rgba(255,255,255,0.6);">3:00 · MathMate 产品演示</span>
-        </div>
-      </div>
-      <p style="text-align:center;font-size:0.82rem;color:var(--text-secondary);margin-top:0.6rem;opacity:0.7;">MathMate 产品演示视频 · 点击播放</p>
-    </div>
-    <div style="margin-top:2rem;margin-bottom:0.5rem;" class="fade-in">
-      <img src="images/poster.png" alt="MathMate 产品海报" style="max-width:420px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:0 8px 40px rgba(108,92,231,0.2);">
-    </div>
-    <div class="hero-stats">      <div class="hero-stat"><div class="number">6+</div><div class="label">核心功能模块</div></div>
-      <div class="hero-stat"><div class="number">3</div><div class="label">AI 模型协作</div></div>
-      <div class="hero-stat"><div class="number">6</div><div class="label">年级覆盖</div></div>
-      <div class="hero-stat"><div class="number">13+</div><div class="label">版本迭代</div></div>
-    </div>
-    <p class="hero-subtitle">团队：AK全队 &middot; 2026.05</p>
-  </div>
-</section>
+<main id="main-content">
 
-<!-- ====== Section 1: 用户洞察 ====== -->
-<section class="section" id="insights">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">User Insights</div>
-      <h2>用户洞察与问题定义</h2>
-      <p>面向 12-22 岁数学学习者，解决传统搜题工具的核心痛点</p>
-    </div>
-    <div class="pain-grid">
-      <div class="pain-card fade-in">
-        <span class="pain-icon">🔍</span>
-        <h3>拍题只给答案，不讲思路</h3>
-        <p>市面拍照搜题产品多为题库匹配，只输出最终答案和固定解析；遇到未收录题目完全无能为力，无法针对性解释学生的困惑。</p>
-      </div>
-      <div class="pain-card fade-in">
-        <span class="pain-icon">📐</span>
-        <h3>几何题目难以可视化理解</h3>
-        <p>静态图片无法展示几何图形的动态关系（动点轨迹、切线变化），学生难以建立空间直觉。传统产品不提供交互式图形。</p>
-      </div>
-      <div class="pain-card fade-in">
-        <span class="pain-icon">🔀</span>
-        <h3>学习工具分散</h3>
-        <p>学生需在多个 App 之间切换——计算器、画图工具、搜题工具、笔记工具，学习流程被打断，效率低下。</p>
-      </div>
-      <div class="pain-card fade-in">
-        <span class="pain-icon">🎯</span>
-        <h3>缺乏个性化辅导</h3>
-        <p>不同年级、不同水平的学生需要不同深度和风格的讲解，但传统产品千人一面，无法适配个体需求。</p>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:2rem;" class="fade-in">
-      <img src="images/real-scene.png" alt="MathMate实际使用场景" style="max-width:90%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;" onclick="openLightbox(this)">
-      <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.5rem;">MathMate 实际使用场景</p>
-    </div>
-    <div class="scenario-cards fade-in" style="margin-top:2.5rem;">
-      <div class="scenario-card">
-        <span class="scenario-tag">场景一</span>
-        <h3>晚自习遇到难题</h3>
-        <p>高三学生小张遇到解析几何大题，打开 MathMate 拍照上传。10 秒内完成题目识别、AI 求解，并自动生成交互式几何图形——他可以拖动动点，直观看到轨迹变化和临界条件。AI 给出分步骤解题思路，从审题、建模到计算、验证全程展示。</p>
-      </div>
-      <div class="scenario-card">
-        <span class="scenario-tag">场景二</span>
-        <h3>考前专题复习</h3>
-        <p>初三学生小李备考二次函数专题，对参数影响感到困惑。她打开 AI 聊天助手，用自然语言提问："二次函数 y=ax²+bx+c 中 a 的正负怎么影响图像？"AI 即时回复解释，并调用绘图工具实时展示不同参数下的图像变化。还浏览了推荐的 B 站数学视频，彻底理解了函数变换。</p>
-      </div>
-    </div>
-  </div>
-</section>
+  <!-- ============ 1. Hero ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-aurora" aria-hidden="true"></div>
+    <canvas id="hero3d" aria-hidden="true"></canvas>
 
-<!-- ====== Section 2: 核心流程 ====== -->
-<section class="section" id="pipeline">
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Core Pipeline</div>
-      <h2>三步智能解题流程</h2>
-      <p>拍照上传后，AI 流水线自动完成从识别到可视化的完整流程</p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;" class="fade-in">
-      <img src="images/flow.png" alt="交互流程图" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;" onclick="openLightbox(this)">
-    </div>
-    <div class="pipeline-steps">
-      <div class="pipeline-step fade-in">
-        <span class="step-number">01</span>
-        <div class="step-icon ocr">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h3v3H7zM14 7h3v3h-3z"/></svg>
-        </div>
-        <h3>OCR 智能识别</h3>
-        <p>火山引擎多模态模型将图片识别为 Markdown + LaTeX 格式，支持手写体与印刷体，图像裁剪与增强预处理。</p>
-      </div>
-      <div class="pipeline-step fade-in">
-        <span class="step-number">02</span>
-        <div class="step-icon solve">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00CEC9" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
-        </div>
-        <h3>AI 分步求解</h3>
-        <p>DeepSeek 大模型对识别结果进行深度推理，生成清晰的分步解析，覆盖小学到大学各难度。</p>
-      </div>
-      <div class="pipeline-step fade-in">
-        <span class="step-number">03</span>
-        <div class="step-icon viz">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><polygon points="12 2 22 22 2 22"/></svg>
-        </div>
-        <h3>几何可视化</h3>
-        <p>AI 自动生成几何 JSON → 自研 Canvas 引擎渲染可交互图形，支持点/线/圆/椭圆/抛物线/双曲线/动点。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 3: 功能展示 ====== -->
-<section class="section" id="showcase">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Feature Showcase</div>
-      <h2>全方位功能展示</h2>
-      <p>从拍照解题到拓展学习，全方位呈现 MathMate 的强大功能</p>
-    </div>
-
-    <!-- 01 拍照搜题 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">01</div>
-        <div>
-          <h3>拍照搜题 + AI 求解</h3>
-          <p>拍照即解题，AI 实时推理生成详细解答</p>
-        </div>
-      </div>
-      <div class="feature-img-row">
-        <img src="images/微信图片_20260508204749_218_31.jpg" alt="拍照识别-拍照" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204844_225_31.jpg" alt="拍照识别-识别结果" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204844_226_31.jpg" alt="拍照识别-解题" onclick="openLightbox(this)">
-      </div>
-      <p class="feature-desc">拍照或从相册选取数学题目，AI 自动识别公式、求解并生成分步解析。支持图像裁剪与增强预处理，10秒内完成「拍照→识别→解题→可视化」全流程。无题库限制，任意题目均可识别求解。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">图像裁剪</span>
-        <span class="hl-tag">手写体识别</span>
-        <span class="hl-tag">LaTeX 公式</span>
-        <span class="hl-tag">分步解析</span>
-        <span class="hl-tag">无题库限制</span>
-      </div>
-    </div>
-
-    <!-- 02 几何可视化 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">02</div>
-        <div>
-          <h3>交互式几何可视化</h3>
-          <p>自研 Flutter 原生渲染引擎，AI 驱动动态图形</p>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin-bottom:1.2rem;">
-        <!-- Animated Geometry Canvas Demo -->
-        <div style="background:#12122a;border:1px solid rgba(108,92,231,0.25);border-radius:12px;padding:1.2rem;position:relative;overflow:hidden;min-height:260px;">
-          <div style="font-size:0.72rem;color:var(--accent);margin-bottom:0.6rem;font-weight:600;letter-spacing:0.05em;">GEOMETRY PAINTER · LIVE</div>
-          <svg viewBox="0 0 300 220" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
-            <!-- Grid -->
-            <defs>
-              <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(108,92,231,0.1)" stroke-width="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="300" height="220" fill="url(#grid)"/>
-            <!-- Axes -->
-            <line x1="40" y1="180" x2="270" y2="180" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
-            <line x1="40" y1="180" x2="40" y2="20" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
-            <text x="270" y="195" fill="rgba(224,224,240,0.4)" font-size="9">x</text>
-            <text x="30" y="22" fill="rgba(224,224,240,0.4)" font-size="9">y</text>
-            <!-- Parabola -->
-            <path d="M 55,175 Q 105,110 155,40 Q 205,110 255,175" fill="none" stroke="#6C5CE7" stroke-width="2" stroke-linecap="round">
-              <animate attributeName="stroke-dasharray" values="0,400;400,0" dur="2s" fill="freeze"/>
-            </path>
-            <!-- Circle -->
-            <circle cx="155" cy="110" r="55" fill="none" stroke="#00CEC9" stroke-width="1.8" stroke-dasharray="4,3">
-              <animate attributeName="r" values="50;58;50" dur="4s" repeatCount="indefinite"/>
-            </circle>
-            <!-- Tangent line -->
-            <line x1="80" y1="60" x2="230" y2="160" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="6,3">
-              <animate attributeName="stroke-dashoffset" values="0;18" dur="1.5s" repeatCount="indefinite"/>
-            </line>
-            <!-- Moving point on parabola -->
-            <circle r="4" fill="#FDCB6E">
-              <animateMotion dur="3s" repeatCount="indefinite" path="M 55,175 Q 105,110 155,40 Q 205,110 255,175"/>
-            </circle>
-            <!-- Static points with labels -->
-            <circle cx="155" cy="40" r="3.5" fill="#6C5CE7"/>
-            <text x="162" y="38" fill="#A29BFE" font-size="9" font-weight="600">A</text>
-            <circle cx="100" cy="134" r="3.5" fill="#00CEC9"/>
-            <text x="87" y="132" fill="#81ECEC" font-size="9" font-weight="600">B</text>
-            <circle cx="210" cy="134" r="3.5" fill="#00CEC9"/>
-            <text x="216" y="132" fill="#81ECEC" font-size="9" font-weight="600">C</text>
-            <!-- Intersection point -->
-            <circle cx="155" cy="110" r="3" fill="#FF6B6B"/>
-            <text x="162" y="108" fill="#FF6B6B" font-size="8">P(x,y)</text>
-            <!-- Labels -->
-            <text x="180" y="52" fill="rgba(108,92,231,0.7)" font-size="8" font-style="italic">y = ax² + bx + c</text>
-            <text x="200" y="85" fill="rgba(0,206,201,0.7)" font-size="8" font-style="italic">(x-h)²+(y-k)²=r²</text>
-          </svg>
-        </div>
-        <!-- Feature cards showing capabilities -->
-        <div style="display:flex;flex-direction:column;gap:0.8rem;">
-          <div style="background:rgba(108,92,231,0.08);border:1px solid rgba(108,92,231,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
-            <div style="width:36px;height:36px;border-radius:8px;background:rgba(108,92,231,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">📐</div>
-            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">GeometryJSON 协议</div><div style="font-size:0.78rem;color:var(--text-secondary);">AI 输出结构化 JSON → Canvas 实时渲染</div></div>
-          </div>
-          <div style="background:rgba(0,206,201,0.08);border:1px solid rgba(0,206,201,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
-            <div style="width:36px;height:36px;border-radius:8px;background:rgba(0,206,201,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">🎯</div>
-            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">交互式拖拽</div><div style="font-size:0.78rem;color:var(--text-secondary);">动点轨迹动画、滑块调参、手势缩放</div></div>
-          </div>
-          <div style="background:rgba(255,107,107,0.08);border:1px solid rgba(255,107,107,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
-            <div style="width:36px;height:36px;border-radius:8px;background:rgba(255,107,107,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">⚡</div>
-            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">60fps 原生渲染</div><div style="font-size:0.78rem;color:var(--text-secondary);">纯 Dart Canvas，零 WebView 依赖，自动重试</div></div>
-          </div>
-          <div style="background:rgba(253,203,110,0.08);border:1px solid rgba(253,203,110,0.2);border-radius:10px;padding:1rem;display:flex;align-items:center;gap:0.8rem;">
-            <div style="width:36px;height:36px;border-radius:8px;background:rgba(253,203,110,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">🔄</div>
-            <div><div style="font-size:0.88rem;font-weight:600;margin-bottom:0.15rem;">丰富图形支持</div><div style="font-size:0.78rem;color:var(--text-secondary);">点、线、圆、椭圆、双曲线、抛物线、动点</div></div>
-          </div>
-        </div>
-      </div>
-      <p class="feature-desc">核心创新：AI 自动从题目文本中抽取几何参数并生成 JSON，自研 GeometryPainter 引擎（纯 Dart Canvas）实时渲染可交互图形。支持点、线、圆、椭圆、双曲线、抛物线、动点轨迹动画、滑块拖拽。零 WebView 依赖，60fps 原生帧率，解析失败自动重试。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">自研引擎</span>
-        <span class="hl-tag">60fps 原生渲染</span>
-        <span class="hl-tag">拖拽交互</span>
-        <span class="hl-tag">动点动画</span>
-        <span class="hl-tag">零 WebView 依赖</span>
-        <span class="hl-tag">自动重试</span>
-      </div>
-    </div>
-
-    <!-- 03 智能笔记 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">03</div>
-        <div>
-          <h3>智能笔记系统</h3>
-          <p>手写笔记 + 富文本编辑，AI OCR 智能识别</p>
-        </div>
-      </div>
-      <div class="feature-img-row">
-        <img src="images/微信图片_20260508201708_217_31.png" alt="笔记-手写" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204753_223_31.jpg" alt="笔记-编辑" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204754_224_31.jpg" alt="笔记-管理" onclick="openLightbox(this)">
-      </div>
-      <p class="feature-desc">双重笔记模式：手写笔记支持 Catmull-Rom 样条平滑笔迹、真橡皮擦精确擦除、7 色 3 档画笔、双指缩放平移、AI 手写识别转 LaTeX；打字笔记基于 flutter_quill 富文本编辑器，支持 LaTeX 公式插入与图片嵌入。OCR 扫描识别手写内容，将纸质笔记转为结构化数字 Markdown。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">手写平滑</span>
-        <span class="hl-tag">AI OCR</span>
-        <span class="hl-tag">LaTeX 转换</span>
-        <span class="hl-tag">富文本编辑</span>
-        <span class="hl-tag">PDF 导入标注</span>
-        <span class="hl-tag">统一管理</span>
-      </div>
-    </div>
-
-    <!-- 04 数学工具箱 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">04</div>
-        <div>
-          <h3>GeoGebra 数学工具箱</h3>
-          <p>六大专业工具，一站式数学探索</p>
-        </div>
-      </div>
-      <div class="feature-img-row">
-        <img src="images/微信图片_20260507224932_201_31.jpg" alt="工具箱-1" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260507224933_202_31.jpg" alt="工具箱-2" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260507224934_203_31.jpg" alt="工具箱-3" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260507224936_205_31.jpg" alt="工具箱-4" onclick="openLightbox(this)">
-      </div>
-      <p class="feature-desc">集成 GeoGebra 离线版（WebView），提供科学计算器、几何画板、函数绘图、3D 视图、尺规作图、概率模型六种专业工具。与世界领先的数学可视化工具深度整合，学生可进行立体几何建模、函数图像绘制、概率分布分析，通过拖拽参数直观观察数学规律。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">科学计算器</span>
-        <span class="hl-tag">几何画板</span>
-        <span class="hl-tag">函数绘图</span>
-        <span class="hl-tag">3D 视图</span>
-        <span class="hl-tag">尺规作图</span>
-        <span class="hl-tag">概率模型</span>
-      </div>
-    </div>
-
-    <!-- 05 视频推荐 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">05</div>
-        <div>
-          <h3>个性化视频推荐</h3>
-          <p>AI 推荐 + B 站数学视频精准匹配</p>
-        </div>
-      </div>
-      <p class="feature-desc">基于 DeepSeek AI 推荐算法 + 本地关键词匹配的 B 站数学视频推荐系统。支持按年级和模块筛选（小学至高中），历史记录加权排序，智能关联解题知识点。内置 B 站优质数学 UP 主推荐库，帮助学生找到最适合的学习资源。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">AI 推荐</span>
-        <span class="hl-tag">B 站视频</span>
-        <span class="hl-tag">年级筛选</span>
-        <span class="hl-tag">知识关联</span>
-      </div>
-    </div>
-
-    <!-- 06 AI对话 -->
-    <div class="feature-showcase fade-in">
-      <div class="feature-showcase-header">
-        <div class="feature-num">06</div>
-        <div>
-          <h3>AI 对话助手 — 嵌入式数学导师</h3>
-          <p>多模型协同，一对一智能辅导</p>
-        </div>
-      </div>
-      <div class="feature-img-row">
-        <img src="images/微信图片_20260507224940_209_31.jpg" alt="AI对话-1" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204750_220_31.jpg" alt="AI对话-2" onclick="openLightbox(this)">
-        <img src="images/微信图片_20260508204751_221_31.jpg" alt="AI对话-3" onclick="openLightbox(this)">
-      </div>
-      <p class="feature-desc">嵌入式数学导师，是整个 MathMate 动态生态系统中专为数学教学设计的核心模块。以"一对一私人教师"的角色提供解题思路、公式推导、解题方案指导、个性化数学策略。支持流式聊天、Markdown + LaTeX 实时渲染、深度思考链展示、多轮上下文对话，可从主页 Hero 动画过渡进入。</p>
-      <div class="feature-highlights">
-        <span class="hl-tag">流式响应</span>
-        <span class="hl-tag">思考链展示</span>
-        <span class="hl-tag">多轮对话</span>
-        <span class="hl-tag">LaTeX 渲染</span>
-        <span class="hl-tag">Hero 动画</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 4: 技术架构 ====== -->
-<section class="section" id="architecture">
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Architecture</div>
-      <h2>产品技术架构</h2>
-      <p>多层协作架构：应用层 → 服务层 → AI 层 → 数据层 → 可视化引擎</p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;" class="fade-in">
-      <img src="images/architecture.png" alt="产品架构图" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;" onclick="openLightbox(this)">
-    </div>
-    <div class="arch-diagram fade-in">
-      <div class="arch-layer">
-        <div class="arch-layer-title">MathMate 应用层</div>
-        <div class="arch-items">
-          <span class="arch-item">拍照搜题</span>
-          <span class="arch-item">AI 对话助手</span>
-          <span class="arch-item">数学工具箱</span>
-          <span class="arch-item">手写笔记</span>
-          <span class="arch-item">视频推荐</span>
-          <span class="arch-item">个人中心</span>
-        </div>
-      </div>
-      <div class="arch-layer">
-        <div class="arch-layer-title">服务层 (Service Layer)</div>
-        <div class="arch-items">
-          <span class="arch-item">MathPipelineService (编排)</span>
-          <span class="arch-item accent">ChatStreamService</span>
-          <span class="arch-item">VisualizationService</span>
-          <span class="arch-item">GeometryPainter</span>
-        </div>
-      </div>
-      <div class="arch-layer">
-        <div class="arch-layer-title">AI 模型层 (Multi-Model AI)</div>
-        <div class="arch-items">
-          <span class="arch-item">DeepSeek (文本推理/解题/可视化)</span>
-          <span class="arch-item accent">Volc Engine (多模态 OCR)</span>
-          <span class="arch-item">Qwen-PLUS (流式对话)</span>
-        </div>
-      </div>
-      <div class="arch-layer">
-        <div class="arch-layer-title">数据层 (Data Layer)</div>
-        <div class="arch-items">
-          <span class="arch-item">Hive (搜题历史/对话记录)</span>
-          <span class="arch-item">SharedPreferences (设置/偏好)</span>
-        </div>
-      </div>
-      <div class="arch-layer">
-        <div class="arch-layer-title">可视化引擎 (自研 Flutter 原生)</div>
-        <div class="arch-items">
-          <span class="arch-item warn">GeometryPainter (纯 Dart Canvas)</span>
-          <span class="arch-item">GeoGebra WebView</span>
-          <span class="arch-item">支持：点/线/圆/椭圆/双曲线/抛物线/动点动画/拖拽交互</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 5: AI 原生能力 ====== -->
-<section class="section" id="ai">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">AI Native</div>
-      <h2>AI 原生能力说明</h2>
-      <p>去掉 AI，MathMate 的每一项核心功能都无法成立</p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;" class="fade-in">
-      <img src="images/ai-arch.png" alt="AI模型架构图" style="max-width:90%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;" onclick="openLightbox(this)">
-    </div>
-    <div class="ai-grid">
-      <div class="ai-card fade-in">
-        <div class="ai-card-icon">👁️</div>
-        <h4>多模态理解</h4>
-        <div class="ai-model">Volc Engine 多模态模型</div>
-        <p>拍照后将手写/印刷数学题转为 Markdown + LaTeX</p>
-      </div>
-      <div class="ai-card fade-in">
-        <div class="ai-card-icon">🧠</div>
-        <h4>数学推理</h4>
-        <div class="ai-model">DeepSeek API</div>
-        <p>分步推理解答，覆盖小学到大学各难度数学题</p>
-      </div>
-      <div class="ai-card fade-in">
-        <div class="ai-card-icon">📊</div>
-        <h4>结构化输出</h4>
-        <div class="ai-model">DeepSeek API</div>
-        <p>根据题目自动生成几何图形 JSON 描述</p>
-      </div>
-      <div class="ai-card fade-in">
-        <div class="ai-card-icon">💬</div>
-        <h4>流式对话</h4>
-        <div class="ai-model">Qwen-PLUS</div>
-        <p>多轮自然语言交互，个性化辅导</p>
-      </div>
-      <div class="ai-card fade-in">
-        <div class="ai-card-icon">🎬</div>
-        <h4>智能推荐</h4>
-        <div class="ai-model">DeepSeek API</div>
-        <p>基于搜索历史的语义化学习视频推荐</p>
-      </div>
-    </div>
-    <table class="ai-bind-table fade-in">
-      <thead>
-        <tr><th>用户痛点</th><th>AI 能力</th><th>解决方式</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>搜题不够灵活</td><td>大模型推理</td><td>任意题目均可实时求解，无题库限制</td></tr>
-        <tr><td>几何图形无法交互</td><td>结构化输出</td><td>AI 自动生成图形参数 JSON → 自研引擎渲染</td></tr>
-        <tr><td>缺乏个性化讲解</td><td>LLM 多轮对话</td><td>针对性追问，适配不同水平学生</td></tr>
-        <tr><td>学习工具分散</td><td>多模型协作流水线</td><td>统一集成在一个 App 中</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ====== Section 6: 技术路线图 ====== -->
-<section class="section" id="roadmap">
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Roadmap</div>
-      <h2>技术开发路线图</h2>
-      <p>从核心流水线到知识图谱的系统化演进路径</p>
-    </div>
-    <div class="roadmap-phases">
-      <div class="phase-card done fade-in">
-        <span class="phase-status done">✅ 已完成</span>
-        <h3>Phase 1：核心流水线</h3>
-        <p>OCR 识别 + AI 解题 + 几何可视化三步流水线，基础 UI 框架搭建。定义 GeometryJSON 协议，实现 Canvas 渲染引擎 MVP。</p>
-      </div>
-      <div class="phase-card done fade-in">
-        <span class="phase-status done">✅ 已完成</span>
-        <h3>Phase 2：AI 对话与历史</h3>
-        <p>AI 对话助手（流式响应、Markdown + LaTeX）、多轮上下文对话、搜题历史记录持久化。</p>
-      </div>
-      <div class="phase-card done fade-in">
-        <span class="phase-status done">✅ 已完成</span>
-        <h3>Phase 3：工具箱与笔记</h3>
-        <p>GeoGebra 六种数学工具集成（WebView）、手写笔记（Catmull-Rom 平滑）、打字笔记（flutter_quill 富文本）。</p>
-      </div>
-      <div class="phase-card done fade-in">
-        <span class="phase-status done">✅ 已完成</span>
-        <h3>Phase 4：视频与 PDF</h3>
-        <p>AI 视频推荐系统（B 站数学视频 + DeepSeek 语义匹配）、PDF 查看器与标注功能。</p>
-      </div>
-      <div class="phase-card done fade-in">
-        <span class="phase-status done">✅ 已完成</span>
-        <h3>Phase 5：跨平台与性能</h3>
-        <p>Web 平台支持（Flutter Web 构建）、Isar → Hive 数据库迁移完成、跨平台日志系统上线（logger_io / logger_web）、性能优化与稳定性提升。</p>
-      </div>
-      <div class="phase-card planned fade-in">
-        <span class="phase-status planned">📋 规划中</span>
-        <h3>Phase 6：知识图谱</h3>
-        <p>个人知识图谱构建、智能错题本、知识库系统（概念/公式/定理库）、智能复习规划、学习路径推荐。</p>
-      </div>
-    </div>
-
-    <div class="section-header fade-in" style="margin-top:4rem;">
-      <div class="section-label">Future Vision</div>
-      <h2>未来技术规划</h2>
-      <p>从知识图谱构建到本地化 AI 的三阶段演进规划</p>
-    </div>
-    <div class="roadmap-phases">
-      <div class="phase-card active fade-in">
-        <span class="phase-status active">🔄 进行中</span>
-        <h3>知识图谱与智能错题本</h3>
-        <p>构建个人知识图谱、智能错题本自动归集、知识库系统（概念/公式/定理库）、LaTeX 公式编辑器组件。</p>
-      </div>
-      <div class="phase-card planned fade-in">
-        <span class="phase-status planned">中期规划</span>
-        <h3>工具集成推理与学习路径</h3>
-        <p>集成 Wolfram Alpha / Symbolab 外部计算引擎、学习路径智能规划与推荐、多维度知识掌握度分析。</p>
-      </div>
-      <div class="phase-card planned fade-in">
-        <span class="phase-status planned">远期愿景</span>
-        <h3>本地化 AI + 沉浸式体验</h3>
-        <p>flutter_onnxruntime 本地 AI 模型（离线 OCR/推理）、3D 几何可视化增强、VR/AR 数学空间演示、多语言国际化。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 7: 竞争优势 ====== -->
-<section class="section" id="competition">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Competitive Analysis</div>
-      <h2>竞争优势分析</h2>
-      <p>MathMate 在数学解题、可视化、学习工具与成本效率上全面领先</p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;" class="fade-in">
-      <img src="images/core-advantage-full.png" alt="核心优势对比" style="max-width:90%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;" onclick="openLightbox(this)">
-    </div>
-    <div style="overflow-x:auto;">
-      <table class="comp-table fade-in">
-        <thead>
-          <tr>
-            <th>对比维度</th>
-            <th>传统搜题 App（作业帮等）</th>
-            <th class="comp-highlight">MathMate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>解题方式</td>
-            <td>题库匹配 → 固定解析</td>
-            <td class="comp-highlight">AI 实时推理 → 动态分步讲解</td>
-          </tr>
-          <tr>
-            <td>几何可视化</td>
-            <td>静态图片或无图形</td>
-            <td class="comp-highlight">AI 自动生成交互式几何图形</td>
-          </tr>
-          <tr>
-            <td>题目覆盖</td>
-            <td>仅限题库收录</td>
-            <td class="comp-highlight">无题库限制，任意题目均可求解</td>
-          </tr>
-          <tr>
-            <td>学习工具</td>
-            <td>单一搜题功能</td>
-            <td class="comp-highlight">一站式：搜题 + 对话 + 工具箱 + 笔记 + 视频</td>
-          </tr>
-          <tr>
-            <td>个性化</td>
-            <td>无差异化</td>
-            <td class="comp-highlight">按年级分层，AI 多轮对话追问</td>
-          </tr>
-          <tr>
-            <td>图形技术</td>
-            <td>无或简单图片</td>
-            <td class="comp-highlight">自研 Flutter 原生引擎，60fps，零 WebView 依赖</td>
-          </tr>
-          <tr>
-            <td>成本效率</td>
-            <td>题库维护成本高</td>
-            <td class="comp-highlight">Serverless 架构，API 按调用付费</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section-header fade-in" style="margin-top:3.5rem;">
-      <h2>市场分析数据</h2>
-    </div>
-    <div class="market-grid fade-in">
-      <div class="market-card">
-        <div class="market-value">820亿</div>
-        <div class="market-label">目标市场规模 (TAM)</div>
-        <div class="market-desc">中国 K12 数学教育市场</div>
-      </div>
-      <div class="market-card">
-        <div class="market-value">140亿</div>
-        <div class="market-label">可服务市场 (SAM)</div>
-        <div class="market-desc">AI 数学辅导细分市场</div>
-      </div>
-      <div class="market-card">
-        <div class="market-value">50亿</div>
-        <div class="market-label">目标用户年收入</div>
-        <div class="market-desc">注册用户营收预期</div>
-      </div>
-      <div class="market-card">
-        <div class="market-value">#1</div>
-        <div class="market-label">综合评分</div>
-        <div class="market-desc">AI 数学学习品类</div>
-      </div>
-    </div>
-    <div class="section-header fade-in" style="margin-top:3rem;">
-      <h2>竞品数据对比</h2>
-      <p>基于行业参考数据的多维竞争力评估</p>
-    </div>
-    <div class="fade-in" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;">
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;">
-        <h3 style="font-size:1rem;margin-bottom:1rem;">MathMate vs 传统搜题平台</h3>
-        <div style="position:relative;height:340px;"><canvas id="chart-radar"></canvas></div>
-      </div>
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;">
-        <h3 style="font-size:1rem;margin-bottom:1rem;">综合评分总览</h3>
-        <div style="position:relative;height:340px;"><canvas id="chart-comp"></canvas></div>
-      </div>
-    </div>
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-top:1.5rem;" class="fade-in">
-      <h3 style="font-size:1rem;margin-bottom:1rem;">MathMate vs 通用AI大模型</h3>
-      <div style="position:relative;height:320px;"><canvas id="chart-bar"></canvas></div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 8: 商业化 ====== -->
-<section class="section" id="market">
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Business Model</div>
-      <h2>商业化与市场前景</h2>
-      <p>Freemium 模式 + B2B 合作，瞄准千亿级 AI 教育市场</p>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:2rem;">
-      <div class="pain-card fade-in" style="padding:2rem;">
-        <span class="pain-icon">💎</span>
-        <h3>Freemium 模式（核心）</h3>
-        <p style="margin-top:0.5rem;">
-          <strong>免费：</strong>每日限定次数拍照搜题、基础 AI 对话<br>
-          <strong>订阅会员：</strong>¥19.9/月 — 无限搜题、高级模型（更长推理链）、错题本、知识图谱、视频缓存<br>
-          <strong>年费：</strong>¥168/年（省 30%+）
-        </p>
-      </div>
-      <div class="pain-card fade-in" style="padding:2rem;">
-        <span class="pain-icon">🤝</span>
-        <h3>B2B 合作</h3>
-        <p style="margin-top:0.5rem;">
-          与教培机构合作提供定制化 AI 辅学 SDK；为 B 站教育 UP 主提供流量分发收取推广费用；与出版社合作定制学科内容。
-        </p>
-      </div>
-      <div class="pain-card fade-in" style="padding:2rem;">
-        <span class="pain-icon">🛡️</span>
-        <h3>竞争壁垒</h3>
-        <p style="margin-top:0.5rem;">
-          <strong>AI 原生架构</strong> vs 传统题库方案：题目覆盖无上限<br>
-          <strong>自研几何渲染引擎</strong>：形成核心技术壁垒<br>
-          <strong>一站式产品体验</strong>：减少用户切换摩擦<br>
-          <strong>开源社区</strong>：社区驱动快速迭代
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 9: 技术栈 ====== -->
-<section class="section" id="tech">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Tech Stack</div>
-      <h2>技术栈</h2>
-      <p>Flutter 跨平台 + 多 AI 模型协作 + 自研渲染引擎</p>
-    </div>
-    <div class="tech-grid">
-      <div class="tech-item fade-in">
-        <div class="tech-icon flutter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4FC4FF" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div class="tech-info"><h4>Flutter 3.x (Dart)</h4><span>跨平台 UI 框架</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon ai"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg></div>
-        <div class="tech-info"><h4>DeepSeek API</h4><span>核心推理：OCR / 解题 / 可视化</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon ai"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-        <div class="tech-info"><h4>Volc Engine / Qwen</h4><span>多模态 OCR / 流式对话</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon db"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-        <div class="tech-info"><h4>Hive</h4><span>高性能本地 NoSQL 数据库</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon math"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00CEC9" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></div>
-        <div class="tech-info"><h4>GeoGebra</h4><span>离线数学可视化工具</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon math"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00CEC9" stroke-width="2"><text x="5" y="17" font-size="13" font-weight="bold" fill="#00CEC9" stroke="none">fx</text></svg></div>
-        <div class="tech-info"><h4>KaTeX / flutter_math_fork</h4><span>数学公式渲染引擎</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon edit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A29BFE" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-        <div class="tech-info"><h4>flutter_quill</h4><span>富文本编辑器</span></div>
-      </div>
-      <div class="tech-item fade-in">
-        <div class="tech-icon viz"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
-        <div class="tech-info"><h4>Catmull-Rom 样条</h4><span>手写笔画平滑插值</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 10: 版本历程 ====== -->
-<section class="section" id="versions">
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Changelog</div>
-      <h2>版本历程</h2>
-      <p>从 v1.0 到 v2.2，持续迭代的功能演进</p>
-    </div>
-    <div class="timeline fade-in">
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v2.2.1</div>
-        <div class="timeline-title">跨平台日志与优化</div>
-        <div class="timeline-desc">跨平台日志系统（logger_io / logger_web），进一步服务优化。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v2.2.0</div>
-        <div class="timeline-title">数据库迁移与日志系统</div>
-        <div class="timeline-desc">合并远程仓库更新（Isar → Hive），新增 AppLogger 日志系统，优化多个服务。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v2.1.0</div>
-        <div class="timeline-title">设备支持增强</div>
-        <div class="timeline-desc">新增 MathMateApiService、设备 ID 支持、UI 改进。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v2.0</div>
-        <div class="timeline-title">Web 平台支持</div>
-        <div class="timeline-desc">Flutter Web 构建、数据库迁移（Isar → Hive）、跨平台架构完善。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v1.7 - v1.9</div>
-        <div class="timeline-title">功能扩展</div>
-        <div class="timeline-desc">手写笔记全面升级、公式可视化分析、可拖动识别面板、笔记统一管理、功能模块与稳定性提升。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v1.5 - v1.6</div>
-        <div class="timeline-title">工具箱与视频</div>
-        <div class="timeline-desc">GeoGebra 数学工具箱集成、AI 视频推荐系统上线。</div>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-dot"></div>
-        <div class="timeline-version">v1.0 - v1.4</div>
-        <div class="timeline-title">基础架构</div>
-        <div class="timeline-desc">拍照搜题核心流水线（OCR → 解题 → 可视化）、AI 对话助手、笔记系统、个人中心搭建完成。</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Section 11: 产品截图画廊 ====== -->
-<section class="section" id="gallery">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Gallery</div>
-      <h2>产品截图</h2>
-      <p>点击图片查看大图</p>
-    </div>
-    <div class="gallery-grid fade-in">
-      <div class="gallery-item">
-        <img src="images/微信图片_20260507224931_199_31.jpg" alt="首页" onclick="openLightbox(this)">
-        <div class="gallery-caption">应用首页</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260508204749_218_31.jpg" alt="拍照识别" onclick="openLightbox(this)">
-        <div class="gallery-caption">拍照识别</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260508204844_225_31.jpg" alt="解题结果" onclick="openLightbox(this)">
-        <div class="gallery-caption">解题结果</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260508201708_217_31.png" alt="手写笔记" onclick="openLightbox(this)">
-        <div class="gallery-caption">手写笔记</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260507224932_201_31.jpg" alt="数学工具箱" onclick="openLightbox(this)">
-        <div class="gallery-caption">数学工具箱</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260507224940_209_31.jpg" alt="AI对话" onclick="openLightbox(this)">
-        <div class="gallery-caption">AI 对话助手</div>
-      </div>
-      <div class="gallery-item">
-        <img src="images/微信图片_20260507224930_198_31.jpg" alt="个人中心" onclick="openLightbox(this)">
-        <div class="gallery-caption">个人中心</div>
-      </div>
-    </div>
-
-    <!-- 横版产品宣传图（大图展示，与手机截图分离）-->
-    <div style="margin-top:3rem;">
-      <h3 style="text-align:center;font-size:1.1rem;margin-bottom:1.5rem;color:var(--primary-light);">📊 产品宣传图</h3>
-      <div class="fade-in" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:1.5rem;">
-        <figure style="margin:0;">
-          <img src="images/advantage-compare.png" alt="核心优势对比" onclick="openLightbox(this)" style="width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;display:block;">
-          <figcaption style="text-align:center;font-size:0.82rem;color:var(--text-secondary);margin-top:0.6rem;">核心优势对比</figcaption>
-        </figure>
-        <figure style="margin:0;">
-          <img src="images/product-overview.png" alt="产品架构概览" onclick="openLightbox(this)" style="width:100%;border-radius:var(--radius);border:1px solid var(--border);cursor:pointer;display:block;">
-          <figcaption style="text-align:center;font-size:0.82rem;color:var(--text-secondary);margin-top:0.6rem;">产品架构概览</figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== CTA ====== -->
-<section class="section">
-  <div class="container">
-    <div class="cta-card fade-in">
-      <h2>开始使用 MathMate</h2>
-      <p>开源免费，基于 Flutter 构建，融合多 AI 大模型<br>从拍照解题到动态几何可视化的一站式数学学习体验</p>
-      <div class="hero-buttons" style="justify-content:center;">
-        <a href="https://www.bilibili.com/video/BV1EfLJ6bEnw" class="btn-primary" target="_blank" style="background:linear-gradient(135deg, #6C5CE7 0%, #A29BFE 50%, #764ba2 100%);">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          演示视频
+    <div class="hero-content reveal">
+      <span class="hero-badge"><span class="dot"></span> v2.4.5 · AI Native Math Learning</span>
+      <h1>
+        <span class="hero-en">Learn, Solve &amp; See Math</span>
+        <span class="grad">从一道题开始，完成一次真正的学习</span>
+      </h1>
+      <p class="hero-lead">MathMate 面向中小学与大学阶段，把拍题识别、全链路 LaTeX 公式、分步推导、动态图形、自由组卷和六维能力画像放进同一套 Android 与 Web 学习工作台。</p>
+      <div class="keywords" aria-label="MathMate 核心能力">
+        <span>拍题识别</span><span>LaTeX 推导</span><span>几何可视化</span><span>自由组卷</span><span>六维画像</span>
+      </div>
+      <div class="hero-buttons">
+        <a href="https://mathmate.top/website" class="btn btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20"/></svg>
+          打开在线网页端
         </a>
-        <a href="https://github.com/mzk-C4/mathmate" class="btn-secondary" target="_blank">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          GitHub 仓库
+        <a href="tech.html" class="btn btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          阅读技术文档
         </a>
-        <a href="https://mathmate.top/app/app-debug.apk" class="btn-secondary" target="_blank">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          下载 APK
+      </div>
+      <p class="hero-sub">AK完全队 · v2.4.5 · 2026.07 · MIT License</p>
+    </div>
+
+    <div class="hero-media reveal">
+      <div class="product-window">
+        <div class="product-window-bar">
+          <div class="window-dots"><span></span><span></span><span></span></div>
+          <span>MathMate live demo</span>
+        </div>
+        <button id="videoPlayerWrap" class="video-shell" type="button" aria-label="播放 MathMate 产品演示视频">
+          <img id="videoCover" src="images/video-cover.jpg" alt="MathMate 演示视频封面" width="1280" height="720" loading="eager">
+          <span class="video-overlay" id="playOverlay">
+            <span class="play-btn">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true"><polygon points="8 5 20 12 8 19"/></svg>
+            </span>
+            <span class="play-copy">点击播放终极宣传片</span>
+            <span class="play-meta">MathMate 终极宣传片</span>
+          </span>
+        </button>
+      </div>
+      <div class="entry-bar" aria-label="MathMate 产品入口">
+        <a class="entry entry--primary" href="https://mathmate.top/website" target="_blank" rel="noopener">
+          <span class="entry-label">在线网页端 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></span>
+          <small>免安装，直接体验完整流程</small>
+        </a>
+        <a class="entry" href="https://mathmate.top/app/mathmate-2.4.5.apk" target="_blank" rel="noopener">
+          <span class="entry-label">Android 版 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg></span>
+          <small>下载最新版 APK</small>
+        </a>
+        <a class="entry" href="tech.html">
+          <span class="entry-label">技术文档 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 2h9l3 3v17H6zM14 2v5h5"/></svg></span>
+          <small>架构、模型与实现</small>
+        </a>
+        <a class="entry" href="https://github.com/mzk-C4/mathmate" target="_blank" rel="noopener">
+          <span class="entry-label">GitHub <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg></span>
+          <small>查看源码与版本</small>
         </a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- ====== Team ====== -->
-<section class="section" id="team">
-  <div class="section-bg-glow"></div>
-  <div class="container">
-    <div class="section-header fade-in">
-      <div class="section-label">Our Team</div>
-      <h2>团队介绍</h2>
-      <p>AK完全队 — 来自软件学院的跨学科创新团队</p>
-    </div>
-    <div style="text-align:center;margin-bottom:2rem;" class="fade-in">
-      <span style="display:inline-block;padding:0.3rem 1rem;background:rgba(108,92,231,0.15);border-radius:50px;font-size:0.85rem;color:var(--primary-light);">学生成员</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;max-width:960px;margin:0 auto;" class="fade-in">
-      <div class="ai-card"><div style="font-size:2rem;margin-bottom:0.5rem;">🐴</div><h4>马兆坤</h4><div class="ai-model">产品经理</div><p>统筹任务，联系导师，调研竞品，提供创意方向</p></div>
-      <div class="ai-card"><div style="font-size:2rem;margin-bottom:0.5rem;">🎨</div><h4>丁宇鑫</h4><div class="ai-model">前端设计</div><p>客户端应用架构设计与核心界面开发，接口对接和数据库管理</p></div>
-      <div class="ai-card"><div style="font-size:2rem;margin-bottom:0.5rem;">💻</div><h4>周星橙</h4><div class="ai-model">前端开发</div><p>产品视觉风格定调、高保真用户交互流程和设计输出规范</p></div>
-      <div class="ai-card"><div style="font-size:2rem;margin-bottom:0.5rem;">⚙️</div><h4>章开元</h4><div class="ai-model">后端开发</div><p>服务器端与接口开发、技术栈选型、核心模块代码编写与性能优化</p></div>
-      <div class="ai-card"><div style="font-size:2rem;margin-bottom:0.5rem;">🧠</div><h4>应沛成</h4><div class="ai-model">AI 提示词工程师</div><p>专注垂直领域（数学方向）的大模型提示词编写与逻辑调优</p></div>
-    </div>
-    <div style="text-align:center;margin:2.5rem 0 1.5rem;" class="fade-in">
-      <span style="display:inline-block;padding:0.3rem 1rem;background:rgba(162,155,254,0.15);border-radius:50px;font-size:0.85rem;color:#A29BFE;">指导老师</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;max-width:500px;margin:0 auto;" class="fade-in">
-      <div class="ai-card"><div style="font-size:1.5rem;margin-bottom:0.5rem;">👨‍🏫</div><h4>孙永谦</h4><div class="ai-model">副教授 · 博士生导师</div><p>软件学院，主要提供技术指导和具体注意事项</p></div>
-      <div class="ai-card"><div style="font-size:1.5rem;margin-bottom:0.5rem;">👨‍🏫</div><h4>王超</h4><div class="ai-model">副研究员 · 硕士生导师</div><p>软件学院，主要指导想法设计以及竞品角度</p></div>
-    </div>
-  </div>
-</section>
+    <div class="progress-bar" aria-hidden="true"><div class="progress" id="heroProgress"></div></div>
+  </section>
 
-<!-- Footer -->
-<footer>
-  <p>MathMate v2.2.0 &mdash; MIT License &mdash; 一款以 AI 大模型为核心驱动的智能数学学习应用</p>
-  <p style="margin-top:0.4rem;">团队：AK全队 &middot; <a href="https://github.com/mzk-C4/mathmate">GitHub</a> &middot; <a href="https://mathmate.top">官网</a> &middot; <a href="https://www.bilibili.com/video/BV1EfLJ6bEnw">演示视频</a> &middot; <a href="tech.html">技术详解</a></p>
+  <!-- ============ 2. 痛点 · 为什么 ============ -->
+  <section class="section section--glow section--full" id="pain">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Why MathMate</span>
+        <h2>传统搜题工具，解决不了真正的学习</h2>
+        <p class="section-en">Where traditional solvers stop, real learning begins.</p>
+        <p>面向 12-22 岁数学学习者的四个核心痛点</p>
+      </header>
+      <div class="pain-grid">
+        <article class="pain-card reveal">
+          <span class="icon" aria-hidden="true">🔍</span>
+          <h3>拍题只给答案，不讲思路</h3>
+          <p>市面拍照搜题多为题库匹配，只输出固定解析；遇到未收录题目完全无能为力。</p>
+        </article>
+        <article class="pain-card reveal">
+          <span class="icon" aria-hidden="true">📐</span>
+          <h3>几何题目难以可视化</h3>
+          <p>静态图片无法展示动点轨迹、切线变化，学生难以建立空间直觉。</p>
+        </article>
+        <article class="pain-card reveal">
+          <span class="icon" aria-hidden="true">🔀</span>
+          <h3>学习工具分散</h3>
+          <p>计算器、画图、搜题、笔记来回切换，学习流程被反复打断。</p>
+        </article>
+        <article class="pain-card reveal">
+          <span class="icon" aria-hidden="true">🎯</span>
+          <h3>缺乏个性化辅导</h3>
+          <p>不同年级、不同水平需要不同深度的讲解，传统产品千人一面。</p>
+        </article>
+      </div>
+      <figure class="figure reveal" style="margin-top:2.5rem;">
+        <div class="figure-scroll">
+          <img src="images/real-scenario.png" alt="MathMate 实际使用场景" loading="lazy" width="1200" height="675">
+        </div>
+        <figcaption>MathMate 在真实学习场景中的使用</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ 3. 核心流程 ============ -->
+  <section class="section" id="pipeline">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Core Pipeline</span>
+        <h2>三步智能解题流程</h2>
+        <p class="section-en">A three-step intelligent solving pipeline.</p>
+        <p>拍照上传后，AI 流水线自动完成从识别到可视化的完整流程</p>
+      </header>
+      <figure class="figure reveal" style="margin-bottom:2.5rem;">
+        <div class="figure-scroll">
+          <img src="images/flow.png" alt="MathMate 系统流程图，展示登录、新手引导、拍题、OCR、AI 解题、GeometryJSON 验证、多平台渲染和历史记录流程" loading="lazy" width="1600" height="900">
+        </div>
+        <figcaption>完整系统流程：从登录和拍题输入，到 OCR、AI 解题、几何验证与结果沉淀。点击图片可查看大图。</figcaption>
+      </figure>
+      <div class="pipeline">
+        <article class="pipeline-step reveal">
+          <span class="step-num">01</span>
+          <div class="step-icon ocr"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h3v3H7zM14 7h3v3h-3z"/></svg></div>
+          <h3>OCR 智能识别</h3>
+          <p>火山引擎多模态模型将图片识别为 Markdown + LaTeX，支持手写体与印刷体。</p>
+        </article>
+        <article class="pipeline-step reveal">
+          <span class="step-num">02</span>
+          <div class="step-icon solve"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00CEC9" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg></div>
+          <h3>AI 分步求解</h3>
+          <p>DeepSeek 大模型深度推理，生成清晰分步解析，覆盖小学到大学各难度。</p>
+        </article>
+        <article class="pipeline-step reveal">
+          <span class="step-num">03</span>
+          <div class="step-icon viz"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2" aria-hidden="true"><polygon points="12 2 22 22 2 22"/></svg></div>
+          <h3>几何可视化</h3>
+          <p>AI 自动生成几何 JSON → 自研 Canvas 引擎渲染可交互图形，支持动点与轨迹。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. 能力总览 + 精选详解 ============ -->
+  <section class="section section--glow" id="features">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Feature Showcase</span>
+        <h2>v2.4.5 学习工作台</h2>
+        <p class="section-en">The v2.4.5 AI-native math workspace.</p>
+        <p>围绕「理解题目、探索关系、练习评测、沉淀资料」组织的九项能力</p>
+      </header>
+
+      <!-- 9 项能力网格 -->
+      <div class="feature-grid">
+        <article class="feature-tile reveal"><div class="icon">📷</div><h3>拍照搜题 + AI 求解</h3><p>拍照即解题，10 秒完成识别到可视化。</p></article>
+        <article class="feature-tile reveal"><div class="icon">📐</div><h3>交互式几何可视化</h3><p>自研引擎，AI 驱动动态图形。</p></article>
+        <article class="feature-tile reveal"><div class="icon">📝</div><h3>智能笔记系统</h3><p>手写 + 富文本，AI OCR 转 LaTeX。</p></article>
+        <article class="feature-tile reveal"><div class="icon">🧮</div><h3>GeoGebra 工具箱</h3><p>计算器、几何画板、3D、概率六大工具。</p></article>
+        <article class="feature-tile reveal"><div class="icon">🎬</div><h3>个性化视频推荐</h3><p>AI 语义匹配 B 站数学视频。</p></article>
+        <article class="feature-tile reveal"><div class="icon">💬</div><h3>AI 对话助手</h3><p>多模型流式对话，连续追问思路。</p></article>
+        <article class="feature-tile reveal"><div class="icon">📝</div><h3>自由组卷与考试报告</h3><p>选题、答题、评分、六维画像闭环。</p></article>
+        <article class="feature-tile reveal"><div class="icon">📚</div><h3>资料库 + Awesome Math</h3><p>个人资料与开放资源分区管理。</p></article>
+        <article class="feature-tile reveal"><div class="icon">🔐</div><h3>开放注册与统一认证</h3><p>手机号注册、JWT 鉴权、自动登录。</p></article>
+      </div>
+
+      <!-- 精选详解 1: 几何可视化 (含 SVG 动画) -->
+      <article class="deepdive reveal">
+        <header class="deepdive-head">
+          <div class="deepdive-num">02</div>
+          <div><h3>交互式几何可视化</h3><p>自研 Flutter 原生渲染引擎，AI 驱动动态图形</p></div>
+        </header>
+        <div class="deepdive-body">
+          <div class="geo-demo">
+            <div class="tag">GEOMETRY PAINTER · LIVE</div>
+            <svg viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="动态几何演示：抛物线、圆与切线">
+              <defs>
+                <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                  <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(108,92,231,0.1)" stroke-width="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="300" height="220" fill="url(#grid)"/>
+              <line x1="40" y1="180" x2="270" y2="180" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
+              <line x1="40" y1="180" x2="40" y2="20" stroke="rgba(224,224,240,0.3)" stroke-width="1"/>
+              <path d="M 55,175 Q 105,110 155,40 Q 205,110 255,175" fill="none" stroke="#6C5CE7" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="155" cy="110" r="55" fill="none" stroke="#00CEC9" stroke-width="1.8" stroke-dasharray="4,3">
+                <animate attributeName="r" values="50;58;50" dur="4s" repeatCount="indefinite"/>
+              </circle>
+              <line x1="80" y1="60" x2="230" y2="160" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="6,3">
+                <animate attributeName="stroke-dashoffset" values="0;18" dur="1.5s" repeatCount="indefinite"/>
+              </line>
+              <circle r="4" fill="#F2C14E">
+                <animateMotion dur="3s" repeatCount="indefinite" path="M 55,175 Q 105,110 155,40 Q 205,110 255,175"/>
+              </circle>
+              <circle cx="155" cy="40" r="3.5" fill="#6C5CE7"/>
+              <text x="162" y="38" fill="#A29BFE" font-size="9" font-weight="600">A</text>
+              <circle cx="100" cy="134" r="3.5" fill="#00CEC9"/>
+              <text x="87" y="132" fill="#72E2DD" font-size="9" font-weight="600">B</text>
+              <circle cx="210" cy="134" r="3.5" fill="#00CEC9"/>
+              <text x="216" y="132" fill="#72E2DD" font-size="9" font-weight="600">C</text>
+              <circle cx="155" cy="110" r="3" fill="#FF6B6B"/>
+              <text x="162" y="108" fill="#FF6B6B" font-size="8">P(x,y)</text>
+              <text x="180" y="52" fill="rgba(108,92,231,0.7)" font-size="8" font-style="italic">y = ax² + bx + c</text>
+              <text x="200" y="85" fill="rgba(0,206,201,0.7)" font-size="8" font-style="italic">(x-h)²+(y-k)²=r²</text>
+            </svg>
+          </div>
+          <div class="deepdive-text">
+            <p>核心创新：AI 自动从题目文本抽取几何参数并生成 JSON，自研 GeometryPainter 引擎（纯 Dart Canvas）实时渲染可交互图形。支持点、线、圆、椭圆、双曲线、抛物线、动点轨迹动画与滑块拖拽。</p>
+            <div class="hl-tags">
+              <span class="hl-tag">自研引擎</span>
+              <span class="hl-tag">60fps 原生渲染</span>
+              <span class="hl-tag">动点动画</span>
+              <span class="hl-tag">零 WebView 依赖</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 精选详解 2: AI 对话 -->
+      <article class="deepdive reveal">
+        <header class="deepdive-head">
+          <div class="deepdive-num">06</div>
+          <div><h3>AI 对话助手</h3><p>统一流式服务，连续追问数学思路</p></div>
+        </header>
+        <div class="deepdive-body">
+          <img src="images/app-ai-chat.jpg" alt="MathMate AI 对话助手页面" loading="lazy" width="400" height="711">
+          <div class="deepdive-text">
+            <p>升级对话首页、消息流与统一流式服务，可在 DeepSeek、Qwen 和火山 Ark 模型之间按任务切换。围绕一道题连续追问条件、公式来源和替代解法，通过 Markdown 与 LaTeX 阅读结构化回答；历史会话支持快速检索。</p>
+            <div class="hl-tags">
+              <span class="hl-tag">流式响应</span>
+              <span class="hl-tag">多模型路由</span>
+              <span class="hl-tag">LaTeX 渲染</span>
+              <span class="hl-tag">会话历史</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 精选详解 3: 组卷与考试报告（配图） -->
+      <article class="deepdive reveal">
+        <header class="deepdive-head">
+          <div class="deepdive-num">07</div>
+          <div><h3>自由组卷与考试报告</h3><p>从选题到答题、评分与复盘的完整链路</p></div>
+        </header>
+        <div class="deepdive-body">
+          <img src="images/exam-bank1.jpg" alt="MathMate 自由组卷与题库选题界面" loading="lazy" width="400" height="889">
+          <div class="deepdive-text">
+            <p>在练习工作区按知识板块、难度、题型和题量创建试卷，支持单选、多选、填空与解答题，题目、选项和解析均使用 LaTeX 公式渲染。提交后由规则与 AI 协同评分，考试报告更新计算、逻辑推理、空间想象、抽象思维、应用与数学建模六维画像，覆盖大学阶段能力评估。</p>
+            <div class="hl-tags">
+              <span class="hl-tag">自由组卷</span>
+              <span class="hl-tag">多题型答题</span>
+              <span class="hl-tag">自动评分</span>
+              <span class="hl-tag">六维能力雷达</span>
+            </div>
+          </div>
+        </div>
+        <div class="deepdive-thumbs">
+          <img src="images/exam-question.jpg" alt="MathMate 题目 LaTeX 渲染" loading="lazy" width="200" height="444">
+          <img src="images/exam-radar.jpg" alt="MathMate 六维能力报告雷达图" loading="lazy" width="200" height="444">
+          <img src="images/exam-bank2.jpg" alt="MathMate 题库与试卷预览" loading="lazy" width="200" height="444">
+        </div>
+      </article>
+
+      <!-- 精选详解 4: 资料库 + Awesome Math（新增配图） -->
+      <article class="deepdive reveal">
+        <header class="deepdive-head">
+          <div class="deepdive-num">08</div>
+          <div><h3>个人资料库 + Awesome Math</h3><p>自己的学习材料与开放数学资源分区管理</p></div>
+        </header>
+        <div class="deepdive-body">
+          <img src="images/library.jpg" alt="MathMate 资料库界面" loading="lazy" width="400" height="889">
+          <div class="deepdive-text">
+            <p>在「我的资料」与「资源库」之间切换：前者支持上传课件、真题、图片与音频并由 AI 分类，后者提供 Awesome Math 外链索引，可按学段、资源类型、数学分类与关键词筛选，让个人材料与开放资源分区沉淀。</p>
+            <div class="hl-tags">
+              <span class="hl-tag">资料上传</span>
+              <span class="hl-tag">OCR 解析</span>
+              <span class="hl-tag">AI 分类</span>
+              <span class="hl-tag">开放资源索引</span>
+            </div>
+          </div>
+        </div>
+        <div class="deepdive-thumbs">
+          <img src="images/exam-radar-bank.jpg" alt="MathMate 能力画像与题库联动" loading="lazy" width="200" height="444">
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 5. 技术内核 ============ -->
+  <section class="section" id="tech">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Tech Core</span>
+        <h2>产品技术内核</h2>
+        <p class="section-en">The product technology core.</p>
+        <p>多层协作架构 · 多模型 AI · 自研渲染引擎，构成 MathMate 的技术壁垒</p>
+      </header>
+
+      <figure class="figure reveal" style="margin-bottom:2.5rem;">
+        <div class="figure-scroll">
+          <img src="images/architecture-v2.4.5-portrait.png" alt="MathMate v2.4.5 五层产品技术架构" loading="lazy" width="1000" height="1400">
+        </div>
+        <figcaption>MathMate v2.4.5 五层技术架构：Flutter 跨平台、多模型 AI、数学可视化、本地数据与云端服务协同。</figcaption>
+      </figure>
+
+      <h3 class="subhead reveal">分层架构</h3>
+      <div class="arch-layers reveal">
+        <div class="arch-layer">
+          <h4>应用层 · Application</h4>
+          <div class="arch-items">
+            <span class="arch-item">拍照搜题</span><span class="arch-item">AI 对话</span><span class="arch-item">数学工具箱</span>
+            <span class="arch-item">手写笔记</span><span class="arch-item">自由组卷</span><span class="arch-item">考试报告</span>
+            <span class="arch-item">资料与资源库</span><span class="arch-item">登录注册</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <h4>服务层 · Service</h4>
+          <div class="arch-items">
+            <span class="arch-item">MathPipelineService（编排）</span>
+            <span class="arch-item accent">ChatStreamService</span>
+            <span class="arch-item">AuthService / JWT</span>
+            <span class="arch-item">VisualizationService</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <h4>AI 模型层 · Multi-Model</h4>
+          <div class="arch-items">
+            <span class="arch-item">DeepSeek（推理/解题/可视化）</span>
+            <span class="arch-item accent">Volc Engine Ark（多模态 OCR）</span>
+            <span class="arch-item">Qwen（流式对话）</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <h4>数据层 · Data</h4>
+          <div class="arch-items">
+            <span class="arch-item">Hive（搜题历史/对话记录）</span>
+            <span class="arch-item">SharedPreferences（设置/偏好）</span>
+          </div>
+        </div>
+        <div class="arch-layer">
+          <h4>可视化引擎 · 自研 Flutter 原生</h4>
+          <div class="arch-items">
+            <span class="arch-item warn">GeometryPainter（纯 Dart Canvas）</span>
+            <span class="arch-item">GeoGebra WebView</span>
+            <span class="arch-item">点/线/圆/椭圆/双曲线/抛物线/动点</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="subhead reveal">AI 原生能力</h3>
+      <p class="reveal" style="color:var(--color-text-muted);margin-bottom:1.2rem;max-width:680px;">去掉 AI，MathMate 的每一项核心功能都无法成立。</p>
+      <div class="ai-cards">
+        <article class="ai-card reveal"><div class="icon" aria-hidden="true">👁️</div><h4>多模态理解</h4><div class="model">Volc Engine</div><p>手写/印刷题转 Markdown + LaTeX</p></article>
+        <article class="ai-card reveal"><div class="icon" aria-hidden="true">🧠</div><h4>数学推理</h4><div class="model">DeepSeek</div><p>分步推理，覆盖小学到大学</p></article>
+        <article class="ai-card reveal"><div class="icon" aria-hidden="true">📊</div><h4>结构化输出</h4><div class="model">DeepSeek</div><p>自动生成几何图形 JSON</p></article>
+        <article class="ai-card reveal"><div class="icon" aria-hidden="true">💬</div><h4>流式对话</h4><div class="model">Qwen-PLUS</div><p>多轮自然语言个性化辅导</p></article>
+        <article class="ai-card reveal"><div class="icon" aria-hidden="true">🎬</div><h4>智能推荐</h4><div class="model">DeepSeek</div><p>语义化学习视频推荐</p></article>
+      </div>
+
+      <h3 class="subhead reveal">技术栈</h3>
+      <div class="stack-grid">
+        <div class="stack-item reveal"><div class="icon flutter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4FC4FF" stroke-width="2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div><h4>Flutter 3.x (Dart)</h4><span>跨平台 UI 框架</span></div></div>
+        <div class="stack-item reveal"><div class="icon ai"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2" aria-hidden="true"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg></div><div><h4>DeepSeek API</h4><span>核心推理：OCR / 解题 / 可视化</span></div></div>
+        <div class="stack-item reveal"><div class="icon ai"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6C5CE7" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div><h4>Volc Engine / Qwen</h4><span>多模态 OCR 与模型路由</span></div></div>
+        <div class="stack-item reveal"><div class="icon db"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div><div><h4>Node.js + JWT</h4><span>开放注册与接口鉴权</span></div></div>
+        <div class="stack-item reveal"><div class="icon db"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="2" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><div><h4>Hive</h4><span>高性能本地 NoSQL</span></div></div>
+        <div class="stack-item reveal"><div class="icon math"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00CEC9" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></div><div><h4>GeoGebra</h4><span>离线数学可视化工具</span></div></div>
+        <div class="stack-item reveal"><div class="icon math"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><text x="5" y="17" font-size="13" font-weight="bold" fill="#00CEC9">fx</text></svg></div><div><h4>KaTeX / flutter_math_fork</h4><span>数学公式渲染引擎</span></div></div>
+        <div class="stack-item reveal"><div class="icon edit"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A29BFE" stroke-width="2" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div><h4>flutter_quill</h4><span>富文本编辑器</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. 对比与演进 ============ -->
+  <section class="section section--glow section--full" id="evidence">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Comparison &amp; Roadmap</span>
+        <h2>差异化定位与持续演进</h2>
+        <p class="section-en">Differentiated positioning, continuous evolution.</p>
+        <p>从产品对比看 MathMate 的独特性，从路线图看它的成长轨迹</p>
+      </header>
+
+      <figure class="figure reveal" style="margin-bottom:2.5rem;">
+        <div class="video-embed">
+          <iframe src="https://player.bilibili.com/player.html?bvid=BV15h3M65Eht&high_quality=1" title="MathMate 与其他数学软件对比演示" loading="lazy" scrolling="no" allowfullscreen allow="fullscreen; encrypted-media" referrerpolicy="no-referrer"></iframe>
+        </div>
+        <figcaption>MathMate 与其他数学软件对比演示视频</figcaption>
+      </figure>
+
+      <figure class="figure reveal" style="margin-bottom:2.5rem;">
+        <div class="figure-scroll">
+          <img src="images/model-arch.png" alt="MathMate、作业帮、豆包与 GeoGebra 在题目识别、解答、个性化、可视化、一站式体验等维度的对比分析" loading="lazy" width="1400" height="900">
+        </div>
+        <figcaption>数学工具能力对比：从题目理解、解答、个性化、可视化与学习流程等维度展示产品差异。</figcaption>
+      </figure>
+
+      <h3 class="subhead reveal">技术路线图</h3>
+      <div class="roadmap">
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 1 · 核心流水线</h3><p>OCR + AI 解题 + 几何可视化三步流水线，定义 GeometryJSON 协议与 Canvas 渲染 MVP。</p></article>
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 2 · AI 对话与历史</h3><p>流式对话、Markdown + LaTeX、多轮上下文、搜题历史持久化。</p></article>
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 3 · 工具箱与笔记</h3><p>GeoGebra 六工具集成、Catmull-Rom 手写笔记、flutter_quill 富文本。</p></article>
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 4 · 视频与 PDF</h3><p>B 站视频 AI 推荐系统、PDF 查看器与标注。</p></article>
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 5 · 跨平台与性能</h3><p>Flutter Web、Isar → Hive 迁移、跨平台日志与性能优化。</p></article>
+        <article class="phase done reveal"><span class="phase-status done">✅ 已完成</span><h3>Phase 6 · 云端考试与资源</h3><p>共享题库、自由组卷、混合判卷、大学六维画像、Awesome Math、多模型路由、JWT 认证。</p></article>
+        <article class="phase active reveal"><span class="phase-status active">🔄 进行中</span><h3>Phase 7 · 自适应学习闭环</h3><p>难度匹配、错题归集、资料联动与个性化复习计划。</p></article>
+        <article class="phase planned reveal"><span class="phase-status planned">中期规划</span><h3>知识图谱与工具增强</h3><p>概念/公式/定理/题目知识图谱，按需接入计算引擎增强验证与溯源。</p></article>
+        <article class="phase planned reveal"><span class="phase-status planned">远期愿景</span><h3>本地化 AI + 沉浸式</h3><p>flutter_onnxruntime 离线推理、3D 几何、VR/AR 数学空间、多语言。</p></article>
+      </div>
+
+      <figure class="figure reveal" style="margin-top:2.5rem;">
+        <div class="figure-scroll">
+          <img src="images/future-smart-learning-lab.png" alt="MathMate 未来智能学习实验室概念图，展示变式训练、每日挑战、错因诊断与协作学习" loading="lazy" width="1400" height="788">
+        </div>
+        <figcaption>未来智能学习实验室概念效果。图中能力属于发展愿景，不代表当前版本已全部上线。</figcaption>
+      </figure>
+
+      <h3 class="subhead reveal">版本历程</h3>
+      <div class="timeline reveal">
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.4.5</div><div class="timeline-title">GeoChat 几何引擎与练习增强</div><div class="timeline-desc">上线 GeoChat 几何引擎（几何计划生成、执行与验证），我的资料支持长按删除；选择题多格式解析、填空题数值等价判定与下一题导航；修复 LaTeX 渲染闪退，补齐几何与考试单元测试。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.4.4</div><div class="timeline-title">错题本、离线几何与考试认证</div><div class="timeline-desc">新增错题本模块、GeoGebra 离线命令解析与独立 JWT 认证，上线 PDF 文本解析；APK 下载强制 HTTPS 白名单与 SHA256 完整性校验，移动端几何渲染性能提升。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.4.1</div><div class="timeline-title">大学画像、公式链路与账号体系</div><div class="timeline-desc">扩展大学阶段六维能力评估，打通练习、题库和搜题页 LaTeX 渲染；上线开放注册与 JWT 认证，升级 DeepSeek、Qwen、火山 Ark 多模型聊天。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.4.0</div><div class="timeline-title">考试闭环、Awesome Math 与多模型</div><div class="timeline-desc">考试系统接入生产，自由组卷、逐题判卷、考试报告与画像联动；新增 Awesome Math 资源库，重构流式聊天。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.3.4</div><div class="timeline-title">练习系统与能力画像</div><div class="timeline-desc">新增练习 Tab、能力自评、六维雷达画像、云端题库与评分反馈闭环。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.3.2 – v2.3.3</div><div class="timeline-title">资料库与共享题库</div><div class="timeline-desc">资料导入、OCR 分类、响应式导航、题库 API 与数据生产链路。</div></div>
+        <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.3.0 – v2.3.1</div><div class="timeline-title">Agent 与跨平台可视化</div><div class="timeline-desc">GeoGebra Agent、AI 绘图、学习者档案、登录认证与自动更新。</div></div>
+      </div>
+
+      <details class="versions-more reveal">
+        <summary>查看更早的版本（v1.0 – v2.2.1）<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></summary>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.2.0 – v2.2.1</div><div class="timeline-title">数据库迁移与跨平台日志</div><div class="timeline-desc">Isar → Hive 迁移、AppLogger 日志系统、logger_io / logger_web。</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v2.0 – v2.1.0</div><div class="timeline-title">Web 平台与设备支持</div><div class="timeline-desc">Flutter Web 构建、MathMateApiService、设备 ID 支持与 UI 改进。</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v1.5 – v1.9</div><div class="timeline-title">工具箱、视频与笔记</div><div class="timeline-desc">GeoGebra 工具箱、AI 视频推荐、手写笔记全面升级、公式可视化分析。</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-ver">v1.0 – v1.4</div><div class="timeline-title">基础架构</div><div class="timeline-desc">拍照搜题核心流水线（OCR → 解题 → 可视化）、AI 对话、笔记与个人中心。</div></div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ 7. 画廊 + 团队 ============ -->
+  <section class="section" id="gallery">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Gallery</span>
+        <h2>产品截图</h2>
+        <p class="section-en">Product gallery.</p>
+        <p>点击图片查看大图</p>
+      </header>
+      <div class="gallery reveal">
+        <figure class="gallery-item"><img src="images/app-home.jpg" alt="MathMate 应用首页" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">应用首页</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-camera-recognition.jpg" alt="MathMate 拍照识别页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">拍照识别</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-solution-result.jpg" alt="MathMate 解题结果页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">解题结果</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-handwritten-notes.png" alt="MathMate 手写笔记页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">手写笔记</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-math-toolbox.jpg" alt="MathMate 数学工具箱页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">数学工具箱</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-ai-chat.jpg" alt="MathMate AI 对话助手页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">AI 对话</figcaption></figure>
+        <figure class="gallery-item"><img src="images/app-profile.jpg" alt="MathMate 个人中心页面" loading="lazy" width="270" height="480"><figcaption class="gallery-cap">个人中心</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--glow" id="team">
+    <div class="container">
+      <header class="section-head reveal">
+        <span class="section-label">Our Team</span>
+        <h2>团队介绍</h2>
+        <p class="section-en">Meet the AK team.</p>
+        <p>AK完全队 — 来自软件学院的跨学科创新团队</p>
+      </header>
+
+      <span class="team-group-label reveal"><span style="background:rgba(108,92,231,0.15);color:var(--color-accent-soft);">学生成员</span></span>
+      <div class="team-grid">
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">🐴</div><h4>马兆坤</h4><div class="role">产品经理</div><p>统筹任务，联系导师，调研竞品，提供创意方向。</p></article>
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">🎨</div><h4>丁宇鑫</h4><div class="role">前端设计</div><p>客户端架构与核心界面开发，接口对接与数据库管理。</p></article>
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">💻</div><h4>周星橙</h4><div class="role">前端开发</div><p>视觉风格定调、高保真交互流程与设计规范。</p></article>
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">⚙️</div><h4>章开元</h4><div class="role">后端开发</div><p>服务端与接口开发、技术选型、核心模块与性能优化。</p></article>
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">🧠</div><h4>应沛成</h4><div class="role">AI 提示词工程师</div><p>数学垂直领域大模型提示词编写与逻辑调优。</p></article>
+      </div>
+
+      <span class="team-group-label reveal" style="margin-top:2.5rem;"><span style="background:rgba(162,155,254,0.15);color:var(--color-primary-soft);">指导老师</span></span>
+      <div class="team-grid" style="max-width:560px;margin-inline:auto;">
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">👨‍🏫</div><h4>孙永谦</h4><div class="role">副教授 · 博士生导师</div><p>软件学院，提供技术指导与具体注意事项。</p></article>
+        <article class="team-card reveal"><div class="avatar" aria-hidden="true">👨‍🏫</div><h4>王超</h4><div class="role">副研究员 · 硕士生导师</div><p>软件学院，指导想法设计与竞品角度。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 8. CTA ============ -->
+  <section class="section section--full" id="cta">
+    <div class="container">
+      <div class="cta reveal">
+        <h2>开始使用 MathMate</h2>
+        <p>开源免费，基于 Flutter 构建，融合多 AI 大模型<br>从拍照解题到动态几何可视化的一站式数学学习体验</p>
+        <div class="cta-buttons">
+          <a href="https://mathmate.top/website" class="btn btn-primary" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20"/></svg>
+            打开在线网页端
+          </a>
+          <a href="https://mathmate.top/app/mathmate-2.4.5.apk" class="btn btn-secondary" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            下载 APK
+          </a>
+          <a href="https://github.com/mzk-C4/mathmate" class="btn btn-secondary" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub 仓库
+          </a>
+          <a href="tech.html" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            技术文档
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ Footer ============ -->
+<footer class="footer">
+  <p>MathMate v2.4.5 — MIT License — 覆盖解题、考试、大学能力画像与资源沉淀的 AI 数学学习工作台</p>
+  <p>团队：AK完全队 · <a href="https://github.com/mzk-C4/mathmate">GitHub</a> · <a href="https://mathmate.top">官网</a> · <a href="https://www.bilibili.com/video/BV1ve3Y6EEyu">宣传片</a> · <a href="tech.html">技术详解</a></p>
 </footer>
 
+<!-- ============ Lightbox ============ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="图片大图查看">
+  <button class="lightbox-close" type="button" aria-label="关闭大图" style="position:absolute;top:1rem;right:1.5rem;background:rgba(255,255,255,0.1);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:1.4rem;cursor:pointer;">×</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
-// Scroll progress bar
-const scrollProgress = document.querySelector('.scroll-progress');
-window.addEventListener('scroll', () => {
-  const scrollTop = document.documentElement.scrollTop;
-  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-  scrollProgress.style.width = (scrollTop / scrollHeight * 100) + '%';
-});
+(function () {
+  'use strict';
 
-// Navbar scroll
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 50);
-});
+  // ===== Scroll progress =====
+  var progress = document.getElementById('scrollProgress');
+  var navbar = document.getElementById('navbar');
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () {
+      var st = document.documentElement.scrollTop;
+      var sh = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (sh > 0 ? (st / sh * 100) : 0) + '%';
+      navbar.classList.toggle('scrolled', st > 50);
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-// Fade-in animation
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      const siblings = entry.target.parentElement.querySelectorAll('.fade-in');
-      const idx = Array.from(siblings).indexOf(entry.target);
-      setTimeout(() => entry.target.classList.add('visible'), idx * 60);
-      observer.unobserve(entry.target);
+  // ===== Hero loading progress bar (fills once on load) =====
+  var heroProgress = document.getElementById('heroProgress');
+  if (heroProgress) {
+    var fillHero = function () { window.requestAnimationFrame(function () { heroProgress.style.width = '100%'; }); };
+    if (document.readyState === 'complete') fillHero();
+    else window.addEventListener('load', fillHero);
+  }
+
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  // ===== Ambient: particle constellation network =====
+  var canvas = document.getElementById('particleCanvas');
+  if (canvas && !prefersReducedMotion) {
+    var ctx = canvas.getContext('2d');
+    var cw = 0, ch = 0, particles = [], rafP = null, running = false;
+    var mouseP = { x: -9999, y: -9999 };
+    var LINK = 130, MOUSE_R = 170;
+
+    function sizeCanvas() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cw = window.innerWidth; ch = window.innerHeight;
+      canvas.width = cw * dpr; canvas.height = ch * dpr;
+      canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
-  });
-}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-// Lightbox
-function openLightbox(img) {
-  const lb = document.getElementById('lightbox');
-  document.getElementById('lightbox-img').src = img.src;
-  lb.classList.add('active');
-}
-
-// Charts
-const MM='#6C5CE7',TR='#FF6B6B',AM='#FDCB6E',GY='#A0A0C0';
-if(document.getElementById('chart-radar')){
-  new Chart(document.getElementById('chart-radar'),{
-    type:'radar',
-    data:{labels:['题库覆盖','OCR识别速度','动态可视化','解题逻辑深度','互动性','理解效率'],
-      datasets:[
-        {label:'MathMate',data:[82,91,97,94,88,90],borderColor:MM,backgroundColor:MM+'28',borderWidth:2,pointBackgroundColor:MM,pointRadius:4},
-        {label:'传统搜题软件',data:[88,85,32,48,41,55],borderColor:TR,backgroundColor:TR+'18',borderWidth:2,pointBackgroundColor:TR,pointRadius:4}
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:11},color:'#A0A0C0'},pointLabels:{font:{size:12},color:'#E8E8F0'},grid:{color:'rgba(108,92,231,0.15)'}}}}
-  });
-}
-if(document.getElementById('chart-comp')){
-  new Chart(document.getElementById('chart-comp'),{
-    type:'bar',
-    data:{labels:['即时答疑','数学可视化','个性化学习','成本性价比','解题逻辑深度','用户体验','持续迭代'],
-      datasets:[
-        {label:'MathMate',data:[96,97,88,92,94,89,91],backgroundColor:MM,borderRadius:4},
-        {label:'传统搜题',data:[72,35,60,78,48,70,55],backgroundColor:TR,borderRadius:4},
-        {label:'在线教育',data:[52,58,76,42,71,74,65],backgroundColor:AM,borderRadius:4},
-        {label:'通用大模型',data:[85,20,55,82,65,76,80],backgroundColor:GY,borderRadius:4}
-      ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{ticks:{font:{size:10},color:'#A0A0C0',maxRotation:25},grid:{display:false}},
-        y:{min:0,max:100,ticks:{font:{size:11},color:'#A0A0C0'},grid:{color:'rgba(108,92,231,0.1)'}}}}
-  });
-}
-if(document.getElementById('chart-bar')){
-  new Chart(document.getElementById('chart-bar'),{
-    type:'bar',
-    data:{labels:['文字式解释','文本推理','幻觉风险控制','数学专业覆盖','数学符号严谨性','动态几何画板','专用可视化引擎'],
-      datasets:[
-        {label:'MathMate',data:[88,78,91,94,92,95,97],backgroundColor:MM,borderRadius:4},
-        {label:'通用大模型',data:[85,90,58,68,72,22,18],backgroundColor:GY,borderRadius:4}
-      ]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{min:0,max:100,ticks:{font:{size:11},color:'#A0A0C0'},grid:{color:'rgba(108,92,231,0.1)'}},
-        y:{ticks:{font:{size:11},color:'#E8E8F0'},grid:{display:false}}}}
-  });
-}
-
-// ===== Bubble generator (replaced by canvas particles) =====
-
-// ===== Cursor glow trail =====
-(function(){
-  const glow = document.getElementById('cursorGlow');
-  document.addEventListener('mousemove', e => {
-    glow.style.left = e.clientX + 'px';
-    glow.style.top = e.clientY + 'px';
-  });
-  document.addEventListener('mouseleave', () => {
-    glow.style.left = '-300px';
-    glow.style.top = '-300px';
-  });
-})();
-
-// ===== Click ripple effect =====
-// Lazy-load Bilibili player
-function loadBilibiliPlayer() {
-  const wrap = document.getElementById('videoPlayerWrap');
-  const cover = document.getElementById('videoCover');
-  const overlay = document.getElementById('playOverlay');
-  // Fade out overlay
-  overlay.style.opacity = '0';
-  overlay.style.transition = 'opacity 0.4s';
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    cover.style.display = 'none';
-    // Create iframe
-    const iframe = document.createElement('iframe');
-    iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1EfLJ6bEnw&high_quality=1&autoplay=1';
-    iframe.scrolling = 'no';
-    iframe.allowFullscreen = true;
-    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
-    iframe.allow = 'autoplay; fullscreen';
-    wrap.appendChild(iframe);
-    wrap.style.cursor = 'default';
-    wrap.onclick = null;
-  }, 400);
-}
-
-document.addEventListener('click', function(e){
-  const r = document.createElement('div');
-  r.className = 'ripple';
-  r.style.left = (e.clientX - 150) + 'px';
-  r.style.top = (e.clientY - 150) + 'px';
-  document.body.appendChild(r);
-  setTimeout(() => r.remove(), 800);
-});
-
-// =============================================
-// ===== CANVAS PARTICLE SYSTEM ===============
-// =============================================
-(function(){
-  // ----- Performance Config -----
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const CFG = {
-    isMobile, reducedMotion,
-    particleCount: isMobile ? 30 : (reducedMotion ? 15 : 80),
-    connectionDist: isMobile ? 0 : 130,
-    mathSymbolCount: isMobile ? 4 : (reducedMotion ? 0 : 10),
-    trailEnabled: !isMobile && !reducedMotion,
-    mouseRadius: 150,
-    symbols: ['∫','Σ','π','∞','∂','√','Δ','θ','α','β','±','≈','φ','λ','∇','∈','⊂','∀','∃','ℝ']
-  };
-
-  const canvas = document.getElementById('particleCanvas');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, particles=[], mathSyms=[], trail=[], mouseX=-9999, mouseY=-9999;
-  const purple = [108,92,231], cyan = [0,206,201];
-
-  function resize(){
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  let resizeTimer;
-  window.addEventListener('resize', ()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(resize,200); });
-
-  // ----- Create Particles -----
-  function makeParticle(){
-    const isCyan = Math.random() < 0.35;
-    const c = isCyan ? cyan : purple;
-    return {
-      x: Math.random()*W, y: Math.random()*H,
-      vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
-      r: Math.random()*1.5+0.8,
-      baseOp: Math.random()*0.35+0.15,
-      op: 0, phase: Math.random()*Math.PI*2,
-      speed: Math.random()*0.02+0.01,
-      cr:c[0], cg:c[1], cb:c[2]
-    };
-  }
-  for(let i=0;i<CFG.particleCount;i++) particles.push(makeParticle());
-
-  // ----- Create Math Symbols -----
-  function makeSym(){
-    return {
-      x: Math.random()*W, y: H + Math.random()*200,
-      vy: -(Math.random()*0.4+0.2), vx: (Math.random()-0.5)*0.15,
-      sym: CFG.symbols[Math.floor(Math.random()*CFG.symbols.length)],
-      size: Math.random()*10+14, op: Math.random()*0.08+0.03,
-      rot: Math.random()*Math.PI*2, rotS: (Math.random()-0.5)*0.01
-    };
-  }
-  for(let i=0;i<CFG.mathSymbolCount;i++){
-    const s = makeSym(); s.y = Math.random()*H; mathSyms.push(s);
-  }
-
-  // ----- Mouse tracking -----
-  document.addEventListener('mousemove', e=>{
-    mouseX = e.clientX; mouseY = e.clientY;
-    if(CFG.trailEnabled && trail.length<50){
-      const isCyan = Math.random()<0.4;
-      const c = isCyan ? cyan : purple;
-      trail.push({
-        x:e.clientX, y:e.clientY,
-        vx:(Math.random()-0.5)*1.5, vy:(Math.random()-0.5)*1.5,
-        r:Math.random()*2.5+1.5, life:1,
-        decay:Math.random()*0.03+0.025,
-        cr:c[0], cg:c[1], cb:c[2]
-      });
+    function initParticles() {
+      var divisor = isTouch ? 28000 : 16000;
+      var count = Math.min(isTouch ? 22 : 34, Math.floor((cw * ch) / divisor));
+      particles = [];
+      for (var i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * cw, y: Math.random() * ch,
+          vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+          r: Math.random() * 1.6 + 0.6
+        });
+      }
     }
-  });
-  document.addEventListener('mouseleave', ()=>{ mouseX=-9999; mouseY=-9999; });
-
-  // ----- Animation Loop -----
-  function animate(){
-    ctx.clearRect(0,0,W,H);
-    const t = performance.now()*0.001;
-
-    // Update & draw connections
-    if(CFG.connectionDist > 0){
-      ctx.lineWidth = 0.5;
-      for(let i=0;i<particles.length;i++){
-        for(let j=i+1;j<particles.length;j++){
-          const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-          if(Math.abs(dx)>CFG.connectionDist || Math.abs(dy)>CFG.connectionDist) continue;
-          const d2=dx*dx+dy*dy;
-          if(d2<CFG.connectionDist*CFG.connectionDist){
-            const d=Math.sqrt(d2);
-            const op=(1-d/CFG.connectionDist)*0.12;
-            ctx.strokeStyle='rgba(162,155,254,'+op+')';
-            ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y);
-            ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke();
+    function drawParticles() {
+      ctx.clearRect(0, 0, cw, ch);
+      var n = particles.length;
+      for (var i = 0; i < n; i++) {
+        var p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > cw) p.vx *= -1;
+        if (p.y < 0 || p.y > ch) p.vy *= -1;
+        var dxm = p.x - mouseP.x, dym = p.y - mouseP.y;
+        var dm = Math.sqrt(dxm * dxm + dym * dym);
+        var near = dm < MOUSE_R;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = near ? 'rgba(0,206,201,0.9)' : 'rgba(108,92,231,0.5)';
+        ctx.fill();
+        for (var j = i + 1; j < n; j++) {
+          var q = particles[j];
+          var dx = p.x - q.x, dy = p.y - q.y;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if (d < LINK) {
+            ctx.strokeStyle = 'rgba(114,226,221,' + ((1 - d / LINK) * 0.16).toFixed(3) + ')';
+            ctx.lineWidth = 0.6;
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
           }
         }
+        if (near) {
+          ctx.strokeStyle = 'rgba(0,206,201,' + ((1 - dm / MOUSE_R) * 0.45).toFixed(3) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouseP.x, mouseP.y); ctx.stroke();
+        }
       }
+      rafP = window.requestAnimationFrame(drawParticles);
     }
+    function startP() { if (!running) { running = true; drawParticles(); } }
+    function stopP() { running = false; if (rafP) { window.cancelAnimationFrame(rafP); rafP = null; } }
 
-    // Update & draw particles
-    for(const p of particles){
-      // Mouse repulsion
-      const dx=p.x-mouseX, dy=p.y-mouseY;
-      const md=Math.sqrt(dx*dx+dy*dy);
-      if(md<CFG.mouseRadius && md>0){
-        const force=(1-md/CFG.mouseRadius)*0.8;
-        p.vx += (dx/md)*force*0.1;
-        p.vy += (dy/md)*force*0.1;
-      }
-      // Damping
-      p.vx *= 0.99; p.vy *= 0.99;
-      p.x += p.vx; p.y += p.vy;
-      // Wrap
-      if(p.x<-10) p.x=W+10; if(p.x>W+10) p.x=-10;
-      if(p.y<-10) p.y=H+10; if(p.y>H+10) p.y=-10;
-      // Pulse opacity
-      p.op = p.baseOp + Math.sin(t*p.speed*60+p.phase)*0.1;
-      // Draw glow dot
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle='rgba('+p.cr+','+p.cg+','+p.cb+','+p.op+')';
-      ctx.shadowColor='rgba('+p.cr+','+p.cg+','+p.cb+','+(p.op*0.8)+')';
-      ctx.shadowBlur=6; ctx.fill(); ctx.shadowBlur=0;
+    sizeCanvas(); initParticles(); startP();
+    window.addEventListener('resize', function () { sizeCanvas(); initParticles(); });
+    if (!isTouch) {
+      window.addEventListener('mousemove', function (e) { mouseP.x = e.clientX; mouseP.y = e.clientY; });
+      document.addEventListener('mouseleave', function () { mouseP.x = -9999; mouseP.y = -9999; });
     }
-
-    // Math symbols
-    for(const s of mathSyms){
-      s.x += s.vx + Math.sin(t*0.5+s.rot)*0.2;
-      s.y += s.vy;
-      s.rot += s.rotS;
-      if(s.y<-40){ s.y=H+20; s.x=Math.random()*W; }
-      ctx.save(); ctx.translate(s.x,s.y); ctx.rotate(s.rot);
-      ctx.font=s.size+"px 'Inter',sans-serif";
-      ctx.fillStyle='rgba(162,155,254,'+s.op+')';
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText(s.sym,0,0); ctx.restore();
-    }
-
-    // Mouse trail
-    for(let i=trail.length-1;i>=0;i--){
-      const p=trail[i];
-      p.x+=p.vx; p.y+=p.vy; p.life-=p.decay; p.r*=0.97;
-      if(p.life<=0){ trail.splice(i,1); continue; }
-      ctx.beginPath(); ctx.arc(p.x,p.y,Math.max(0.1,p.r),0,Math.PI*2);
-      ctx.fillStyle='rgba('+p.cr+','+p.cg+','+p.cb+','+(p.life*0.6)+')';
-      ctx.shadowColor='rgba('+p.cr+','+p.cg+','+p.cb+','+(p.life*0.4)+')';
-      ctx.shadowBlur=4; ctx.fill(); ctx.shadowBlur=0;
-    }
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
-
-// =============================================
-// ===== CARD GLOW EFFECT ======================
-// =============================================
-(function(){
-  const sel='.pain-card,.ai-card,.phase-card,.tech-item,.market-card,.feature-showcase,.pipeline-step,.scenario-card';
-  document.querySelectorAll(sel).forEach(card=>{
-    card.classList.add('glow-card');
-    const g=document.createElement('div'); g.className='card-glow';
-    card.insertBefore(g,card.firstChild);
-    card.addEventListener('mousemove',e=>{
-      const r=card.getBoundingClientRect();
-      g.style.left=(e.clientX-r.left)+'px'; g.style.top=(e.clientY-r.top)+'px';
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stopP(); else startP();
     });
-    card.addEventListener('mouseleave',()=>{ g.style.opacity='0'; });
-  });
-})();
+  }
 
-// =============================================
-// ===== SCROLL SECTION REVEALS ================
-// =============================================
-(function(){
-  const dirs=['reveal-from-left','reveal-from-right','reveal-from-bottom','reveal-scale'];
-  let idx=0;
-  document.querySelectorAll('section.section').forEach(s=>{
-    if(s.id==='hero') return;
-    s.classList.add('reveal-section', dirs[idx%dirs.length]); idx++;
+  // ===== Cursor glow (lerp follow, pointer devices only) =====
+  var glow = document.getElementById('cursorGlow');
+  if (glow && !prefersReducedMotion && !isTouch) {
+    var gx = -400, gy = -400, tx = -400, ty = -400, glowRAF = null;
+    function animateGlow() {
+      gx += (tx - gx) * 0.15; gy += (ty - gy) * 0.15;
+      glow.style.transform = 'translate(' + gx + 'px,' + gy + 'px) translate(-50%,-50%)';
+      if (Math.abs(tx - gx) > 0.5 || Math.abs(ty - gy) > 0.5) {
+        glowRAF = window.requestAnimationFrame(animateGlow);
+      } else { glowRAF = null; }
+    }
+    function kickGlow() { if (!glowRAF) glowRAF = window.requestAnimationFrame(animateGlow); }
+    window.addEventListener('mousemove', function (e) { tx = e.clientX; ty = e.clientY; kickGlow(); });
+    document.addEventListener('mouseleave', function () { tx = -400; ty = -400; kickGlow(); });
+    kickGlow();
+  }
+
+  // ===== Energy ripple on click =====
+  if (!prefersReducedMotion) {
+    document.addEventListener('click', function (e) {
+      var r = document.createElement('div');
+      r.className = 'ripple';
+      r.style.left = e.clientX + 'px';
+      r.style.top = e.clientY + 'px';
+      document.body.appendChild(r);
+      r.addEventListener('animationend', function () { r.remove(); });
+    });
+  }
+
+  // ===== Reveal on scroll =====
+  var revealObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var parent = entry.target.parentElement;
+        var siblings = parent ? parent.querySelectorAll('.reveal') : [entry.target];
+        var idx = Array.prototype.indexOf.call(siblings, entry.target);
+        setTimeout(function () { entry.target.classList.add('visible'); }, Math.max(0, idx) * 60);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
+
+  // ===== Lightbox (keyboard + focus return) =====
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  var lightboxClose = lightbox.querySelector('.lightbox-close');
+  var lastFocused = null;
+
+  function openLightbox(src, alt) {
+    lastFocused = document.activeElement;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightbox.classList.add('active');
+    if (lightboxClose) lightboxClose.focus();
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    lightboxImg.src = '';
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  }
+  // event delegation: open lightbox for any zoomable image
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest('img');
+    if (!img || img.closest('.lightbox')) return;
+    var isZoom =
+      (img.closest('.figure-scroll')) ||
+      (img.closest('.gallery-item')) ||
+      (img.closest('.deepdive-body')) ||
+      (img.style && img.style.cursor === 'zoom-in') ||
+      (img.parentElement && img.parentElement.style && img.parentElement.style.cursor === 'zoom-in');
+    if (isZoom) {
+      e.preventDefault();
+      openLightbox(img.src, img.alt);
+    }
   });
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('revealed'); obs.unobserve(e.target); } });
-  },{threshold:0.05,rootMargin:'0px 0px -50px 0px'});
-  document.querySelectorAll('.reveal-section').forEach(s=>obs.observe(s));
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox || e.target === lightboxImg) closeLightbox();
+  });
+  lightboxClose.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+  });
+
+  // ===== Lazy Bilibili player =====
+  var videoWrap = document.getElementById('videoPlayerWrap');
+  function loadBilibili() {
+    var wrap = document.getElementById('videoPlayerWrap');
+    var cover = document.getElementById('videoCover');
+    var overlay = document.getElementById('playOverlay');
+    if (!wrap || wrap.dataset.loaded === '1') return;
+    wrap.dataset.loaded = '1';
+    overlay.style.transition = 'opacity 0.4s';
+    overlay.style.opacity = '0';
+    setTimeout(function () {
+      overlay.style.display = 'none';
+      cover.style.display = 'none';
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://player.bilibili.com/player.html?bvid=BV1ve3Y6EEyu&high_quality=1&autoplay=1';
+      iframe.scrolling = 'no';
+      iframe.allowFullscreen = true;
+      iframe.allow = 'autoplay; fullscreen';
+      iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+      iframe.title = 'MathMate 产品演示视频';
+      wrap.appendChild(iframe);
+      wrap.style.cursor = 'default';
+    }, 400);
+  }
+  if (videoWrap) {
+    videoWrap.addEventListener('click', loadBilibili);
+    videoWrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); loadBilibili(); }
+    });
+  }
 })();
 </script>
 
+<!-- ===== Three.js 3D hero visual (importmap + module) ===== -->
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+(function () {
+  const canvas = document.getElementById('hero3d');
+  const hero = document.getElementById('hero');
+  if (!canvas || !hero) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarse = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  } catch (e) {
+    return; // no WebGL — skip silently, hero keeps particles + aurora
+  }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 5.0);
+
+  const group = new THREE.Group();
+  // anchor to the hero's upper-right empty band so it never sits on the copy or video window
+  group.position.set(0, 0, 0);
+  group.scale.setScalar(1.05);
+  scene.add(group);
+
+  const CYAN = 0x00CEC9, PURPLE = 0x6C5CE7, SOFT = 0xA29BFE;
+
+  // glowing core — keeps the centre from reading as hollow
+  const coreGeo = new THREE.IcosahedronGeometry(0.42, 0);
+  group.add(new THREE.Mesh(coreGeo, new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.16 })));
+
+  // main icosahedron: wireframe + faint fill
+  const mainGeo = new THREE.IcosahedronGeometry(1.5, 1);
+  const main = new THREE.LineSegments(
+    new THREE.WireframeGeometry(mainGeo),
+    new THREE.LineBasicMaterial({ color: CYAN, transparent: true, opacity: 0.6 })
+  );
+  group.add(main);
+  group.add(new THREE.Mesh(mainGeo, new THREE.MeshBasicMaterial({ color: PURPLE, transparent: true, opacity: 0.05 })));
+
+  // outer low-poly shell, counter-rotates
+  const outerGeo = new THREE.IcosahedronGeometry(2.0, 0);
+  const outer = new THREE.LineSegments(
+    new THREE.WireframeGeometry(outerGeo),
+    new THREE.LineBasicMaterial({ color: SOFT, transparent: true, opacity: 0.16 })
+  );
+  group.add(outer);
+
+  // floating small octahedra orbiting the core
+  const bits = [];
+  const bitGeo = new THREE.OctahedronGeometry(0.12, 0);
+  const BIT_N = 12;
+  for (let i = 0; i < BIT_N; i++) {
+    const m = new THREE.LineSegments(
+      new THREE.WireframeGeometry(bitGeo),
+      new THREE.LineBasicMaterial({ color: i % 2 ? CYAN : PURPLE, transparent: true, opacity: 0.6 })
+    );
+    const a = (i / BIT_N) * Math.PI * 2;
+    m.userData = { a, r: 2.4 + (i % 4) * 0.28, y: ((i % 3) - 1) * 0.9, phase: i * 0.7, speed: 0.5 + (i % 3) * 0.25 };
+    group.add(m);
+    bits.push(m);
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    const w = Math.max(1, rect.width), h = Math.max(1, rect.height);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // pointer interaction — strong directional follow + energy feedback (pointer devices only)
+  const target = { x: 0, y: 0, speed: 0 }, cur = { x: 0, y: 0, speed: 0 };
+  let hover = 0, hoverTarget = 0, lastPX = 0, lastPY = 0;
+  if (!coarse) {
+    window.addEventListener('mousemove', (e) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      target.speed = Math.min(1, Math.hypot(nx - lastPX, ny - lastPY) * 10);
+      target.x = nx; target.y = ny;
+      lastPX = nx; lastPY = ny;
+    });
+    hero.addEventListener('mouseenter', () => { hoverTarget = 1; });
+    hero.addEventListener('mouseleave', () => { hoverTarget = 0; });
+  }
+
+  let t = 0, raf = null, running = false;
+  function frame() {
+    t += 0.01;
+    cur.x += (target.x - cur.x) * 0.06;
+    cur.y += (target.y - cur.y) * 0.06;
+    cur.speed += (target.speed - cur.speed) * 0.12;
+    target.speed *= 0.9;
+    hover += (hoverTarget - hover) * 0.08;
+
+    // the whole rig visibly turns toward the pointer, drifts with it, and breathes on hover
+    group.scale.setScalar(1.05 + hover * 0.1);
+    group.position.x = cur.x * 0.6;
+    group.position.y = -cur.y * 0.6;
+    group.rotation.y = cur.x * 1.6 + t * 0.15;
+    group.rotation.x = -cur.y * 1.2;
+
+    const boost = 1 + cur.speed * 3; // pointer velocity spins the orbiting bits faster
+    main.rotation.x += 0.003 + cur.speed * 0.03;
+    main.rotation.y += 0.002 + cur.speed * 0.02;
+    outer.rotation.y -= 0.0015;
+    outer.rotation.x += 0.0008;
+    for (const m of bits) {
+      const u = m.userData;
+      m.position.set(Math.cos(u.a + t * 0.1) * u.r, u.y + Math.sin(t * u.speed + u.phase) * 0.15, Math.sin(u.a + t * 0.1) * u.r);
+      m.rotation.x += 0.01 * boost;
+      m.rotation.y += 0.008 * boost;
+    }
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(frame);
+  }
+  function start() { if (!running) { running = true; frame(); } }
+  function stop() { running = false; if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  if (reduce) {
+    // static only — render one frame, refresh on resize
+    renderer.render(scene, camera);
+    window.addEventListener('resize', () => { resize(); renderer.render(scene, camera); });
+  } else {
+    start();
+    // pause when hero is scrolled out of view
+    new IntersectionObserver((entries) => {
+      entries.forEach((en) => { en.isIntersecting ? start() : stop(); });
+    }, { threshold: 0 }).observe(hero);
+    document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); });
+  }
+})();
+</script>
 </body>
 </html>
